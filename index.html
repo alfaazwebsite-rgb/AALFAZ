@@ -16,7 +16,7 @@
       <div class="nav-inner">
         <!-- Left Links -->
         <nav class="nav-links nav-links--left" aria-label="Primary navigation left">
-          <a href="shop.html" class="nav-link">Shop</a>
+          <a href="shop.html" class="nav-link" id="shop-hover-trigger">Shop</a>
           <a href="#" class="nav-link">About</a>
           <a href="#" class="nav-link">Futures</a>
         </nav>
@@ -38,6 +38,46 @@
           <a href="#" class="nav-link" id="cart-link">Cart (0)</a>
         </nav>
       </div>
+
+      <!-- Mega-Menu Dropdown (Rhode-style, hover-only) -->
+      <div class="mega-menu" id="mega-menu">
+        <div class="mega-menu__content">
+
+          <!-- Category Tabs -->
+          <div class="mega-menu__tabs" id="mega-tabs">
+            <button class="mega-menu__tab mega-menu__tab--active" data-category="featured">Featured</button>
+            <button class="mega-menu__tab" data-category="earrings">Earrings</button>
+            <button class="mega-menu__tab" data-category="pendants">Pendants</button>
+            <button class="mega-menu__tab" data-category="anklets">Anklets</button>
+            <button class="mega-menu__tab" data-category="rings">Rings</button>
+            <button class="mega-menu__tab" data-category="bracelets">Bracelets</button>
+            <button class="mega-menu__tab" data-category="accessories">Accessories</button>
+          </div>
+
+          <!-- Product Carousel -->
+          <div class="mega-menu__carousel" id="mega-carousel">
+            <div class="mega-menu__cards" id="mega-cards"></div>
+            <button class="mega-menu__arrow mega-menu__arrow--right" id="mega-arrow-right" aria-label="Next">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+            </button>
+            <button class="mega-menu__arrow mega-menu__arrow--left" id="mega-arrow-left" aria-label="Previous">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+          </div>
+
+          <!-- Coming Soon -->
+          <div class="mega-menu__coming-soon" id="mega-coming-soon" style="display:none;">
+            <p class="mega-menu__coming-text">Coming Soon</p>
+          </div>
+
+          <!-- Bottom CTA Pill -->
+          <div class="mega-menu__cta-wrap">
+            <a href="shop.html" class="mega-menu__cta" id="mega-cta">SHOP FEATURED</a>
+          </div>
+
+        </div>
+      </div>
+
     </header>
 
     <!-- Mobile Menu Drawer -->
@@ -506,5 +546,6 @@
     <script src="js/carousel.js"></script>
     <script src="js/influencer-carousel.js"></script>
     <script src="js/footer-parallax.js"></script>
+    <script src="js/shop-dropdown.js"></script>
   </body>
 </html>
