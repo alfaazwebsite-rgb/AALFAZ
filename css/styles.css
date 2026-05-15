@@ -105,6 +105,7 @@ body {
 /* Nav link groups */
 .nav-links {
   display: none;
+  align-items: center;
   gap: 2rem;
   list-style: none;
 }
@@ -131,6 +132,7 @@ body {
   letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 1;
+  padding: 4px 0;
   transition: opacity 0.2s ease;
 }
 
@@ -273,6 +275,15 @@ body {
   border-radius: var(--hero-radius);
   overflow: hidden;
   background: #1a1a1a;
+  z-index: 1; /* Creates stacking context — all slide z-indices are contained here */
+}
+
+.hero__slider,
+.hero__slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .hero__image {
@@ -282,19 +293,17 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: center;
-  /* Subtle Ken Burns entrance */
-  animation: heroZoom 12s var(--ease-smooth) forwards;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
 
-@keyframes heroZoom {
-  from { transform: scale(1.06); }
-  to   { transform: scale(1); }
-}
-
-/* Overlays */
+/* Overlays — must sit above all slides */
 .hero__overlay {
   position: absolute;
   inset: 0;
+  z-index: 10;
+  pointer-events: none;
 }
 
 .hero__overlay--flat {
@@ -310,13 +319,13 @@ body {
   );
 }
 
-/* Hero copy */
+/* Hero copy — must ALWAYS sit above hero__media */
 .hero__content {
   position: absolute;
   bottom: 2.5rem;
   left: 1.5rem;
   color: var(--color-white);
-  z-index: 2;
+  z-index: 5;
   /* Fade-up entrance */
   animation: heroFadeUp 0.9s 0.3s var(--ease-smooth) both;
 }
@@ -913,6 +922,8 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  will-change: transform;
+  transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 /* Reversed — image on LEFT, text on RIGHT */

@@ -13,10 +13,10 @@
   /* ── Product data (mirrors shop.js) ─────────────────────── */
   var products = {
     featured: [
-      { name: 'SOLITAIRE RING', subtitle: 'Crafted in 18K gold', badge: 'new', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80' },
-      { name: 'THE BANGLE SET', subtitle: 'Set of three', badge: 'new', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?auto=format&fit=crop&w=800&q=80' },
-      { name: 'PEARL PENDANT', subtitle: 'Limited edition piece', badge: 'limited edition', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80' },
-      { name: 'CUBAN CHAIN', subtitle: '22K gold finish', badge: 'new', image: 'https://images.unsplash.com/photo-1599459183200-59c3fd3f2da1?auto=format&fit=crop&w=800&q=80' },
+      { name: 'SOLITAIRE RING', subtitle: 'Crafted in 18K gold', badge: 'new', image: 'https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842384/file_00000000e4b4722f8e2c578c5734a676_jadeog.png' },
+      { name: 'THE BANGLE SET', subtitle: 'Set of three', badge: 'new', image: 'https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842386/file_000000005dc8722f80fdcd06c66d08a0_qmpmmj.png' },
+      { name: 'PEARL PENDANT', subtitle: 'Limited edition piece', badge: 'limited edition', image: 'https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842383/file_000000008d20722f930db39bd306a08c_djuj0y.png' },
+      { name: 'CUBAN CHAIN', subtitle: '22K gold finish', badge: 'new', image: 'https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842387/file_00000000bf88722fab83a9a5152dbd3b_osqjva.png' },
       { name: 'DROP EARRINGS', subtitle: 'Diamond studded', badge: 'new', image: 'https://images.unsplash.com/photo-1588444837495-c6cfeb53f32d?auto=format&fit=crop&w=800&q=80' },
       { name: 'TENNIS BRACELET', subtitle: 'Lab-grown diamonds', badge: 'limited edition', image: 'https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=800&q=80' }
     ],
