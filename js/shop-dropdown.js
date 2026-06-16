@@ -56,19 +56,29 @@
   var scrollIndex = 0;
 
   /* ── Card rendering ─────────────────────────────────────── */
-  function buildCard(p) {
+  function buildCard(p, category) {
     var badgeHtml = p.badge
       ? '<span class="mega-card__badge">' + p.badge + '</span>'
       : '';
+    var productIds = {
+      'SOLITAIRE RING': 'ring-solitaire',
+      'THE BANGLE SET': 'bangles-set',
+      'PEARL PENDANT': 'pendant-pearl',
+      'CUBAN CHAIN': 'chain-cuban',
+      'DROP EARRINGS': 'earring-drop',
+      'TENNIS BRACELET': 'bracelet-tennis'
+    };
+    var pid = productIds[p.name];
+    var href = pid ? 'product-details.html?id=' + pid : 'shop.html?cat=' + (category || 'featured');
     return (
-      '<div class="mega-card">' +
+      '<a href="' + href + '" class="mega-card" style="text-decoration:none;color:inherit;display:block;">' +
         badgeHtml +
         '<div class="mega-card__img-wrap">' +
           '<img src="' + p.image + '" alt="' + p.name + '" loading="lazy" />' +
         '</div>' +
         '<h3 class="mega-card__name">' + p.name + '</h3>' +
         '<p class="mega-card__subtitle">' + p.subtitle + '</p>' +
-      '</div>'
+      '</a>'
     );
   }
 
@@ -77,10 +87,10 @@
     scrollIndex = 0;
     var items = products[key] || [];
 
-    // Update CTA text
+    // Update CTA text + href
     var label = key.charAt(0).toUpperCase() + key.slice(1);
     ctaBtn.textContent = 'SHOP ' + label.toUpperCase();
-    ctaBtn.href = 'shop.html';
+    ctaBtn.href = 'shop.html?cat=' + key;
 
     if (items.length === 0) {
       carouselBox.style.display = 'none';
@@ -93,7 +103,7 @@
 
     var html = '';
     for (var i = 0; i < items.length; i++) {
-      html += buildCard(items[i]);
+      html += buildCard(items[i], key);
     }
     cardsWrap.innerHTML = html;
     cardsWrap.scrollLeft = 0;

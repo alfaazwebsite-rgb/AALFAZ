@@ -51,8 +51,19 @@
       ? '<span class="product-card__badge">' + p.badge + '</span>'
       : '';
 
+    var productIds = {
+      'SOLITAIRE RING': 'ring-solitaire',
+      'THE BANGLE SET': 'bangles-set',
+      'PEARL PENDANT': 'pendant-pearl',
+      'CUBAN CHAIN': 'chain-cuban',
+      'DROP EARRINGS': 'earring-drop',
+      'TENNIS BRACELET': 'bracelet-tennis'
+    };
+    var pid = productIds[p.name] || '';
+    var href = pid ? 'product-details.html?id=' + pid : '#';
+
     return (
-      '<a href="#" class="product-card group">' +
+      '<a href="' + href + '" class="product-card group">' +
         '<div class="product-card__base-img">' +
           '<img src="' + p.image + '" alt="' + p.name + '" />' +
         '</div>' +
@@ -119,6 +130,18 @@
     renderCategory(btn.getAttribute('data-category'));
   });
 
-  /* ── Initial render ───────────────────────────────────────── */
-  renderCategory('featured');
+  /* ── Initial render — check URL ?cat= param ──────────────── */
+  var urlCat = new URLSearchParams(window.location.search).get('cat') || 'featured';
+  var validCats = Object.keys(products);
+  var startCat = validCats.indexOf(urlCat) !== -1 ? urlCat : 'featured';
+
+  // Activate correct tab visually
+  for (var i = 0; i < tabs.length; i++) {
+    if (tabs[i].getAttribute('data-category') === startCat) {
+      tabs[i].classList.add('shop__tab--active');
+    } else {
+      tabs[i].classList.remove('shop__tab--active');
+    }
+  }
+  renderCategory(startCat);
 })();

@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="About Alfaaz — Our story, values, and the craftsmanship behind every piece." />
+    <title>About — Alfaaz</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <style>
+      /* ── About Page Specific Styles ── */
+      .about-hero {
+        padding: 0 35px;
+        margin-top: calc(var(--nav-height) + 20px);
+      }
+      .about-hero__inner {
+        border-radius: var(--hero-radius);
+        background: #111;
+        overflow: hidden;
+        position: relative;
+        min-height: 70svh;
+        display: flex;
+        align-items: flex-end;
+      }
+      .about-hero__img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0.55;
+      }
+      .about-hero__content {
+        position: relative;
+        z-index: 2;
+        padding: 3rem 2.5rem;
+        color: #fff;
+      }
+      .about-hero__eyebrow {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.65);
+        margin-bottom: 1rem;
+      }
+      .about-hero__headline {
+        font-family: var(--font-logo);
+        font-size: clamp(2.8rem, 7vw, 5.5rem);
+        font-weight: 400;
+        line-height: 1.05;
+        margin-bottom: 1.5rem;
+      }
+      .about-hero__subtitle {
+        font-size: 1rem;
+        line-height: 1.7;
+        color: rgba(255,255,255,0.75);
+        max-width: 520px;
+      }
+
+      /* ── Values grid ── */
+      .about-values {
+        padding: 35px 35px 0;
+      }
+      .about-values__heading {
+        font-family: var(--font-logo);
+        font-size: clamp(1.8rem, 4vw, 2.8rem);
+        font-weight: 400;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      .about-values__grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      @media (min-width: 640px) {
+        .about-values__grid { grid-template-columns: 1fr 1fr; }
+      }
+      @media (min-width: 1024px) {
+        .about-values__grid { grid-template-columns: 1fr 1fr 1fr; }
+      }
+      .about-value-card {
+        background: #f7f5f0;
+        border-radius: var(--hero-radius);
+        padding: 2.5rem 2rem;
+      }
+      .about-value-card__icon {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+      .about-value-card__title {
+        font-family: var(--font-logo);
+        font-size: 1.4rem;
+        font-weight: 400;
+        margin-bottom: 0.75rem;
+        color: #111;
+      }
+      .about-value-card__body {
+        font-size: 0.9rem;
+        line-height: 1.65;
+        color: #555;
+      }
+
+      /* ── Story section ── */
+      .about-story {
+        padding: 35px 35px 0;
+      }
+      .about-story__inner {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 35px;
+        background: #111;
+        border-radius: var(--hero-radius);
+        overflow: hidden;
+        color: #fff;
+      }
+      @media (min-width: 768px) {
+        .about-story__inner { grid-template-columns: 1fr 1fr; }
+      }
+      .about-story__text {
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      @media (min-width: 768px) {
+        .about-story__text { padding: 4rem 3.5rem; }
+      }
+      .about-story__eyebrow {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.5);
+        margin-bottom: 1rem;
+      }
+      .about-story__heading {
+        font-family: var(--font-logo);
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 400;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+      }
+      .about-story__body {
+        font-size: 0.95rem;
+        line-height: 1.75;
+        color: rgba(255,255,255,0.7);
+        margin-bottom: 2rem;
+      }
+      .about-story__cta {
+        display: inline-block;
+        border: 1px solid rgba(255,255,255,0.5);
+        border-radius: 9999px;
+        padding: 0.6rem 2.5rem;
+        font-size: 0.75rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: #fff;
+        text-decoration: none;
+        align-self: flex-start;
+        transition: all 0.3s ease;
+      }
+      .about-story__cta:hover {
+        background: #fff;
+        color: #111;
+      }
+      .about-story__img {
+        overflow: hidden;
+        min-height: 350px;
+      }
+      @media (max-width: 767px) {
+        .about-story__img { min-height: 280px; }
+      }
+      .about-story__img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* ── Craftsmanship strip ── */
+      .about-craft {
+        padding: 35px 35px 0;
+      }
+      .about-craft__inner {
+        background: #f7f5f0;
+        border-radius: var(--hero-radius);
+        padding: 3rem 2.5rem;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        align-items: center;
+        text-align: center;
+      }
+      @media (min-width: 768px) {
+        .about-craft__inner {
+          grid-template-columns: 1fr 2fr;
+          text-align: left;
+          padding: 4rem 3.5rem;
+        }
+      }
+      .about-craft__stat-group {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+      }
+      @media (min-width: 768px) {
+        .about-craft__stat-group {
+          grid-template-columns: 1fr;
+        }
+      }
+      .about-craft__stat-num {
+        font-family: var(--font-logo);
+        font-size: 3rem;
+        font-weight: 400;
+        line-height: 1;
+        color: #111;
+      }
+      .about-craft__stat-label {
+        font-size: 0.8rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #888;
+        margin-top: 0.25rem;
+      }
+      .about-craft__text-side {}
+      .about-craft__heading {
+        font-family: var(--font-logo);
+        font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+        font-weight: 400;
+        margin-bottom: 1rem;
+        color: #111;
+      }
+      .about-craft__body {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: #555;
+        max-width: 500px;
+      }
+
+      /* ── Team / Founder note ── */
+      .about-founder {
+        padding: 35px 35px 0;
+      }
+      .about-founder__inner {
+        border-radius: var(--hero-radius);
+        overflow: hidden;
+        display: grid;
+        grid-template-columns: 1fr;
+        background: #f7f5f0;
+      }
+      @media (min-width: 768px) {
+        .about-founder__inner { grid-template-columns: 1fr 1fr; }
+      }
+      .about-founder__img {
+        min-height: 400px;
+        overflow: hidden;
+      }
+      .about-founder__img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .about-founder__text {
+        padding: 3rem 2.5rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+      @media (min-width: 768px) {
+        .about-founder__text { padding: 4rem 3.5rem; }
+      }
+      .about-founder__label {
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: #888;
+        margin-bottom: 1rem;
+      }
+      .about-founder__quote {
+        font-family: var(--font-logo);
+        font-size: clamp(1.6rem, 3vw, 2.2rem);
+        font-weight: 400;
+        font-style: italic;
+        line-height: 1.35;
+        color: #111;
+        margin-bottom: 1.5rem;
+      }
+      .about-founder__name {
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #333;
+      }
+      .about-founder__role {
+        font-size: 0.8rem;
+        color: #888;
+        margin-top: 0.2rem;
+      }
+
+      /* ── Footer spacing for about page ── */
+      .about-page-footer-gap {
+        margin-top: 35px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation -->
+    <header id="navbar" class="navbar navbar--shop">
+      <div class="nav-inner">
+        <!-- Left Links -->
+        <nav class="nav-links nav-links--left" aria-label="Primary navigation left">
+          <a href="shop.html" class="nav-link">Shop</a>
+          <a href="about.html" class="nav-link nav-link--active">About</a>
+        </nav>
+
+        <!-- Mobile Hamburger -->
+        <button class="nav-hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Mobile Cart Icon -->
+        <a href="cart.html" class="nav-cart-mobile" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="nav-cart-mobile__badge cart-badge">0</span>
+        </a>
+
+        <!-- Logo -->
+        <a href="index.html" class="nav-logo" aria-label="Aalfaz home">
+          <img src="https://res.cloudinary.com/dr2obukgq/image/upload/v1781621650/Picsart_26-06-16_19-54-36-262_wurqgo.png" alt="Aalfaz" class="nav-logo__img" />
+        </a>
+
+        <!-- Right Links -->
+        <nav class="nav-links nav-links--right" aria-label="Primary navigation right">
+          <a href="#" class="nav-link nav-link--desktop">Search</a>
+          <a href="#" class="nav-link nav-link--desktop">Account</a>
+          <a href="cart.html" class="nav-link" id="cart-link" style="display:flex;align-items:center;gap:0.5rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-count-text">Cart</span>
+          </a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <nav class="mobile-menu__nav">
+        <a href="shop.html" class="mobile-menu__link">Shop</a>
+        <a href="about.html" class="mobile-menu__link">About</a>
+        <a href="#" class="mobile-menu__link">Search</a>
+        <a href="#" class="mobile-menu__link">Account</a>
+        <a href="cart.html" class="mobile-menu__link cart-count-text">Cart</a>
+      </nav>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+    <main>
+
+      <!-- Hero -->
+      <section class="about-hero" aria-label="About Alfaaz">
+        <div class="about-hero__inner">
+          <img
+            class="about-hero__img"
+            src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?auto=format&fit=crop&w=2400&q=80"
+            alt="Alfaaz craftsmanship"
+            fetchpriority="high"
+          />
+          <div class="about-hero__content">
+            <p class="about-hero__eyebrow">Our Story</p>
+            <h1 class="about-hero__headline">Jewelry that<br>speaks for itself.</h1>
+            <p class="about-hero__subtitle">
+              Alfaaz was born from the belief that elegance should be effortless.
+              Every piece we craft is a quiet expression — designed to be worn,
+              felt, and remembered.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Values Grid -->
+      <section class="about-values" id="values" aria-label="Our Values">
+        <h2 class="about-values__heading">What we stand for</h2>
+        <div class="about-values__grid">
+
+          <div class="about-value-card">
+            <div class="about-value-card__icon">✦</div>
+            <h3 class="about-value-card__title">Intentional Design</h3>
+            <p class="about-value-card__body">
+              Every detail is purposeful. We don't add ornamentation for the sake of it — each curve, weight, and finish is chosen with care and conviction.
+            </p>
+          </div>
+
+          <div class="about-value-card">
+            <div class="about-value-card__icon">◎</div>
+            <h3 class="about-value-card__title">Ethical Sourcing</h3>
+            <p class="about-value-card__body">
+              We work only with trusted suppliers who share our commitment to responsible practices. Every stone, every gram of gold, is tracked with integrity.
+            </p>
+          </div>
+
+          <div class="about-value-card">
+            <div class="about-value-card__icon">◈</div>
+            <h3 class="about-value-card__title">Enduring Quality</h3>
+            <p class="about-value-card__body">
+              We make jewelry to last. Not just a season, but a lifetime — pieces that hold their brilliance and meaning no matter how many times they're worn.
+            </p>
+          </div>
+
+          <div class="about-value-card">
+            <div class="about-value-card__icon">◇</div>
+            <h3 class="about-value-card__title">Individual Expression</h3>
+            <p class="about-value-card__body">
+              Alfaaz celebrates the person wearing the piece. Our designs are versatile, quiet, and confident enough to complement any individual's story.
+            </p>
+          </div>
+
+          <div class="about-value-card">
+            <div class="about-value-card__icon">◉</div>
+            <h3 class="about-value-card__title">Limited Editions</h3>
+            <p class="about-value-card__body">
+              We believe in rarity. Our collections are small by design — each piece feels exclusive because it genuinely is. Fewer, but far better.
+            </p>
+          </div>
+
+          <div class="about-value-card">
+            <div class="about-value-card__icon">❖</div>
+            <h3 class="about-value-card__title">Crafted in India</h3>
+            <p class="about-value-card__body">
+              Rooted in India's rich jewelry-making heritage, we blend ancient techniques with modern sensibility to create pieces that are both timeless and now.
+            </p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Story Section -->
+      <section class="about-story" aria-label="Our Story">
+        <div class="about-story__inner">
+          <div class="about-story__text">
+            <p class="about-story__eyebrow">The Beginning</p>
+            <h2 class="about-story__heading">From a single idea<br>to a curated world.</h2>
+            <p class="about-story__body">
+              Alfaaz started as a conversation between two friends about why beautiful jewelry had to be either cheap and forgettable, or expensive and unwearable. We wanted something different — pieces with soul that you could actually wear everyday.
+            </p>
+            <p class="about-story__body">
+              Today, every Alfaaz piece begins as a sketch, becomes a prototype, is tested for months, and only reaches you when it's exactly right. There are no shortcuts. There is no compromise.
+            </p>
+            <a href="shop.html" class="about-story__cta">Explore the Collection</a>
+          </div>
+          <div class="about-story__img">
+            <img
+              src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=80"
+              alt="Alfaaz jewelry craftsmanship"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </section>
+
+      <!-- Craftsmanship Stats -->
+      <section class="about-craft" aria-label="Craftsmanship">
+        <div class="about-craft__inner">
+          <div class="about-craft__stat-group">
+            <div>
+              <div class="about-craft__stat-num">18K</div>
+              <div class="about-craft__stat-label">Gold Standard</div>
+            </div>
+            <div>
+              <div class="about-craft__stat-num">100%</div>
+              <div class="about-craft__stat-label">Ethically Sourced</div>
+            </div>
+            <div>
+              <div class="about-craft__stat-num">4+</div>
+              <div class="about-craft__stat-label">Years of Craft</div>
+            </div>
+            <div>
+              <div class="about-craft__stat-num">∞</div>
+              <div class="about-craft__stat-label">Lifetime Finish</div>
+            </div>
+          </div>
+          <div class="about-craft__text-side">
+            <h2 class="about-craft__heading">Built to last<br>beyond seasons.</h2>
+            <p class="about-craft__body">
+              Every Alfaaz piece is crafted by artisans with decades of expertise. We use only 18K gold, ethically sourced gemstones, and finishes that are guaranteed to hold their beauty through years of wear. We stand behind everything we make.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Founder Note -->
+      <section class="about-founder" aria-label="Founder Message">
+        <div class="about-founder__inner">
+          <div class="about-founder__img">
+            <img
+              src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=600&auto=format&fit=crop"
+              alt="Alfaaz Founder"
+              loading="lazy"
+            />
+          </div>
+          <div class="about-founder__text">
+            <p class="about-founder__label">A Note from the Founder</p>
+            <blockquote class="about-founder__quote">
+              "I wanted every woman who wears Alfaaz to feel like herself — not dressed up, not dressed down. Just perfectly, quietly, brilliantly herself."
+            </blockquote>
+            <p class="about-founder__name">Alfaaz Team</p>
+            <p class="about-founder__role">Founder & Creative Director</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <div class="about-page-footer-gap"></div>
+      <footer class="site-footer" id="site-footer">
+        <div class="footer__inner">
+          <div class="footer__logo-wrap">
+            <h2 class="footer__logo-text" id="footer-logo">Aalfaz</h2>
+          </div>
+          <hr class="footer__divider" />
+          <div class="footer__links-grid">
+            <div class="footer__link-col">
+              <h3 class="footer__col-title">Collections</h3>
+              <a href="shop.html?cat=rings" class="footer__link">Rings</a>
+              <a href="shop.html?cat=pendants" class="footer__link">Necklaces</a>
+              <a href="shop.html?cat=earrings" class="footer__link">Earrings</a>
+              <a href="shop.html?cat=bracelets" class="footer__link">Bracelets</a>
+            </div>
+            <div class="footer__link-col">
+              <h3 class="footer__col-title">Brand</h3>
+              <a href="about.html" class="footer__link">About Alfaaz</a>
+              <a href="about.html#values" class="footer__link">Our Values</a>
+              <a href="about.html" class="footer__link">Craftsmanship</a>
+            </div>
+            <div class="footer__link-col">
+              <h3 class="footer__col-title">Support</h3>
+              <a href="#" class="footer__link">Contact</a>
+              <a href="#" class="footer__link">FAQ</a>
+              <a href="#" class="footer__link">Shipping &amp; Returns</a>
+              <a href="#" class="footer__link">Care Guide</a>
+            </div>
+            <div class="footer__link-col">
+              <h3 class="footer__col-title">Legal</h3>
+              <a href="#" class="footer__link">Privacy Policy</a>
+              <a href="#" class="footer__link">Terms</a>
+            </div>
+          </div>
+          <div class="footer__bottom">
+            <p class="footer__copyright">&copy; 2026 Alfaaz. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
+    </main>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/mobile-menu.js"></script>
+    <script src="js/footer-parallax.js"></script>
+    <script src="js/ecommerce.js"></script>
+  </body>
+</html>
