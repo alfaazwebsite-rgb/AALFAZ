@@ -876,7 +876,7 @@ body {
     position: relative;
     order: 1;
     background: #f7f5f0;
-    padding: 1.5rem 2.5rem 3rem 2.5rem; /* Reduced top padding to close the gap */
+    padding: 1.5rem 1.5rem 3rem 1.5rem; /* Reduced side padding to make text wider */
     max-width: none;
     border-radius: 0 0 var(--hero-radius) var(--hero-radius);
   }
