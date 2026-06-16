@@ -402,6 +402,7 @@
       } else if (checkoutState.method === 'PHONEPE') {
         processPhonePePayment(btn);
       }
+    }); /* ← closes checkout-details-form submit listener */
 
     document.getElementById('checkout-continue-btn').addEventListener('click', function () {
       closeCheckout();
@@ -482,27 +483,37 @@
     var finalAmount = totalAmount + shipping;
 
     try {
-      // 1. Ask Netlify Function to create an order
+      // 1. Call Netlify Function — it creates the order AND returns the public key_id
       var res = await fetch('/.netlify/functions/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: finalAmount })
       });
-      
+
       var orderData = await res.json();
+
+      // Handle not_configured gracefully
+      if (res.status === 503) {
+        showToast('Razorpay is not yet set up. Please contact support.');
+        if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+        return;
+      }
       if (!res.ok) throw new Error(orderData.error || 'Failed to initialize payment');
 
-      // 2. Open Razorpay Widget
+      // 2. Open Razorpay Widget — key_id comes from backend response (never hardcoded)
+      var custName = (document.getElementById('cust-name') || {}).value || '';
+      var custPhone = (document.getElementById('cust-phone') || {}).value || '';
+
       var options = {
-        key: 'RAZORPAY_KEY_ID_PLACEHOLDER', // You can replace this if needed, but Razorpay widget requires key on frontend. If left empty, order creation verifies it. Actually, Razorpay SDK REQUIRES the key on frontend.
+        key: orderData.key_id,  /* public key returned safely from backend */
         amount: orderData.amount,
         currency: orderData.currency,
-        name: "Alfaaz",
-        description: "Jewelry Purchase",
+        name: 'Alfaaz',
+        description: 'Jewelry Purchase',
+        image: 'https://aalfaz-4244d.web.app/images/logo.png',
         order_id: orderData.id,
         handler: async function (response) {
-          // 3. Verify Payment with Netlify Function
-          showToast('Verifying payment...');
+          showToast('Verifying payment…');
           try {
             var verifyRes = await fetch('/.netlify/functions/verify-payment', {
               method: 'POST',
@@ -512,36 +523,42 @@
             var verifyData = await verifyRes.json();
             if (verifyData.status === 'success') {
               showToast('Payment Successful! Thank you.');
-              // Clear cart and show success
               cart = [];
               saveCart(cart);
-              document.getElementById('checkout-modal-form-step').style.display = 'none';
-              document.getElementById('checkout-modal-success-step').style.display = 'flex';
-              document.getElementById('whatsapp-btn').style.display = 'none'; // hide WA for online
+              updateAllCartIcons();
+              /* Show success step — correct IDs */
+              showCheckoutStep(3);
+              document.getElementById('whatsapp-btn').style.display = 'none';
+              /* Set order ID on success screen */
+              var oidEl = document.getElementById('success-order-id');
+              if (oidEl) oidEl.textContent = orderData.receipt || orderData.id;
             } else {
-              showToast('Payment verification failed.');
+              showToast('Payment verification failed. Contact support.');
             }
           } catch (e) {
-            showToast('Verification error.');
+            showToast('Verification error. Please screenshot and contact support.');
           }
         },
         prefill: {
-          name: document.getElementById('co-fname').value + ' ' + document.getElementById('co-lname').value,
-          email: document.getElementById('co-email').value,
-          contact: document.getElementById('co-phone').value
+          name: custName,
+          contact: custPhone
         },
-        theme: { color: "#111111" }
+        theme: { color: '#111111' },
+        modal: { ondismiss: function () {
+          if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+        }}
       };
 
       var rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response){
-        showToast('Payment failed. Try again.');
+      rzp.on('payment.failed', function () {
+        showToast('Payment failed. Please try again or use a different method.');
+        if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
       });
       rzp.open();
 
     } catch (err) {
-      console.error(err);
-      showToast('Error connecting to payment server.');
+      console.error('Razorpay error:', err);
+      showToast('Error connecting to payment server. Please try again.');
     } finally {
       if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
     }
@@ -549,33 +566,38 @@
 
   /* ─── Stripe Payment ───────────────────────────────────────── */
   async function processStripePayment(btn) {
-    showToast('Redirecting to Stripe...');
+    showToast('Connecting to Stripe…');
     try {
       var res = await fetch('/.netlify/functions/create-stripe-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           items: cart,
           success_url: window.location.origin + '/cart.html?payment=success',
           cancel_url: window.location.origin + '/cart.html?payment=cancelled'
         })
       });
       var data = await res.json();
+      if (res.status === 503) {
+        showToast('Stripe (International) is not yet set up. Please contact support.');
+        if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+        return;
+      }
       if (res.ok && data.url) {
         window.location.href = data.url;
       } else {
-        throw new Error(data.error || 'Failed to connect to Stripe');
+        throw new Error(data.message || data.error || 'Failed to connect to Stripe');
       }
     } catch (err) {
-      console.error(err);
-      showToast('Stripe checkout failed.');
+      console.error('Stripe error:', err);
+      showToast('Stripe checkout failed. Please try another method.');
       if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
     }
   }
 
   /* ─── PayPal Payment ───────────────────────────────────────── */
   async function processPayPalPayment(btn) {
-    showToast('Initializing PayPal...');
+    showToast('Connecting to PayPal…');
     try {
       var totalAmount = getCartTotal();
       var shipping = totalAmount >= 50000 ? 0 : 999;
@@ -585,42 +607,53 @@
         body: JSON.stringify({ amount: totalAmount + shipping })
       });
       var data = await res.json();
+      if (res.status === 503) {
+        showToast('PayPal is not yet set up. Please contact support.');
+        if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+        return;
+      }
       if (res.ok && data.links) {
-        var approvalLink = data.links.find(link => link.rel === 'approve');
-        if (approvalLink) window.location.href = approvalLink.href;
+        var approvalLink = data.links.find(function(l) { return l.rel === 'approve'; });
+        if (approvalLink) { window.location.href = approvalLink.href; }
+        else throw new Error('No approval link from PayPal');
       } else {
-        throw new Error(data.error || 'Failed to connect to PayPal');
+        throw new Error(data.message || data.error || 'Failed to connect to PayPal');
       }
     } catch (err) {
-      console.error(err);
-      showToast('PayPal checkout failed.');
+      console.error('PayPal error:', err);
+      showToast('PayPal checkout failed. Please try another method.');
       if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
     }
   }
 
   /* ─── PhonePe Payment ──────────────────────────────────────── */
   async function processPhonePePayment(btn) {
-    showToast('Redirecting to PhonePe...');
+    showToast('Connecting to PhonePe…');
     try {
       var totalAmount = getCartTotal();
       var shipping = totalAmount >= 50000 ? 0 : 999;
       var res = await fetch('/.netlify/functions/phonepe-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
+        body: JSON.stringify({
           amount: totalAmount + shipping,
           transactionId: 'ALF-' + Date.now().toString(36).toUpperCase()
         })
       });
       var data = await res.json();
+      if (res.status === 503) {
+        showToast('PhonePe is not yet set up. Please contact support.');
+        if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+        return;
+      }
       if (res.ok && data.data && data.data.instrumentResponse && data.data.instrumentResponse.redirectInfo) {
         window.location.href = data.data.instrumentResponse.redirectInfo.url;
       } else {
-        throw new Error(data.error || 'Failed to connect to PhonePe');
+        throw new Error(data.message || data.error || 'Failed to connect to PhonePe');
       }
     } catch (err) {
-      console.error(err);
-      showToast('PhonePe checkout failed.');
+      console.error('PhonePe error:', err);
+      showToast('PhonePe checkout failed. Please try another method.');
       if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
     }
   }

@@ -1,27 +1,62 @@
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const CORS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'Content-Type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS'
+};
 
-exports.handler = async (event, context) => {
+exports.handler = async (event) => {
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers: CORS, body: '' };
+  }
+
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { statusCode: 405, headers: CORS, body: JSON.stringify({ error: 'Method Not Allowed' }) };
+  }
+
+  // Guard: No fallback test keys — only run if properly configured
+  if (!process.env.STRIPE_SECRET_KEY) {
+    return {
+      statusCode: 503,
+      headers: CORS,
+      body: JSON.stringify({
+        error: 'not_configured',
+        message: 'Stripe is not yet configured. Please add your Stripe credentials in the admin panel.'
+      })
+    };
   }
 
   try {
-    const { items, success_url, cancel_url } = JSON.parse(event.body);
+    // Initialize Stripe inside handler so missing key doesn't crash cold start
+    const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-    // Format items for Stripe Checkout
-    const lineItems = items.map(item => ({
-      price_data: {
-        currency: 'usd', // Defaulting to USD for international
-        product_data: {
-          name: item.name,
-          images: [item.image],
+    const body = JSON.parse(event.body || '{}');
+    const { items, success_url, cancel_url } = body;
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'No items in cart' }) };
+    }
+
+    // Build line items — filter out items with invalid prices
+    const lineItems = items
+      .filter(item => item.priceNum > 0 && item.quantity > 0)
+      .map(item => ({
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: item.name,
+            // Only pass image if it's an absolute URL (Stripe requires it)
+            ...(item.image && item.image.startsWith('http') ? { images: [item.image] } : {})
+          },
+          unit_amount: Math.round((item.priceNum / 83) * 100), // INR to USD cents
         },
-        unit_amount: Math.round((item.priceNum / 83) * 100), // Very rough INR to USD conversion for demo
-      },
-      quantity: item.quantity,
-    }));
+        quantity: item.quantity,
+      }));
 
-    // Add shipping if applicable
+    if (lineItems.length === 0) {
+      return { statusCode: 400, headers: CORS, body: JSON.stringify({ error: 'No valid items' }) };
+    }
+
+    // Add shipping charge if under free shipping threshold
     const totalInr = items.reduce((sum, item) => sum + (item.priceNum * item.quantity), 0);
     if (totalInr < 50000) {
       lineItems.push({
@@ -44,13 +79,14 @@ exports.handler = async (event, context) => {
 
     return {
       statusCode: 200,
-      headers: { "Access-Control-Allow-Origin": "*" },
+      headers: CORS,
       body: JSON.stringify({ id: session.id, url: session.url })
     };
   } catch (error) {
-    console.error(error);
+    console.error('Stripe create-session error:', error);
     return {
       statusCode: 500,
+      headers: CORS,
       body: JSON.stringify({ error: error.message || 'Failed to create Stripe session' })
     };
   }
