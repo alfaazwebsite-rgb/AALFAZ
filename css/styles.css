@@ -879,7 +879,7 @@ body {
     position: relative;
     order: 1;
     background: transparent;
-    padding: 1.5rem 1.5rem 2rem 1.5rem; /* Reduced padding to fix awkward squishing */
+    padding: 3rem 1.5rem 2.5rem 1.5rem; /* Matched top padding to .split__text (3rem) for identical vertical rhythm */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -2106,6 +2106,9 @@ body {
 @media (max-width: 767px) {
   .products {
     padding: 0 16px;
+  }
+  .products__scroll {
+    padding-bottom: 0; /* Remove the 35px bottom padding so next section is flush */
   }
 }
 
