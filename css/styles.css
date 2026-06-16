@@ -223,16 +223,13 @@ body {
   filter: none;
 }
 
-/* Mobile logo image — perfectly symmetrical and zero-bloat via absolute positioning */
+/* Mobile logo image — perfectly symmetrical in normal flow */
 .nav-logo__mobile-img {
   display: inline-block;
-  position: absolute;
-  left: 100%;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-left: 6px;
-  height: 2.5rem; /* freely larger size */
+  height: 2rem; /* matches the text height closely */
   width: auto;
+  margin-left: 2px; /* tight gap */
+  transform: translateY(2px); /* visually aligns with the 'z' descender */
   object-fit: contain;
   filter: brightness(0) invert(1);
   transition: filter 0.35s var(--ease-smooth);
