@@ -2111,7 +2111,8 @@ body {
 
 /* ── Split Sections — tighter on mobile ─────────────────────── */
 @media (max-width: 767px) {
-  .split {
+  .split,
+  .philosophy {
     padding: 0 16px;
     margin-top: 16px;
   }
