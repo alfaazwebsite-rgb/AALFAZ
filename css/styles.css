@@ -150,38 +150,21 @@ body {
   }
 }
 
-/* Logo — image mark */
+/* Logo — serif wordmark (centred) */
 .nav-logo {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
-  transition: opacity 0.25s ease;
-  white-space: nowrap;
+  font-family: var(--font-logo);
+  font-size: 2.3rem;
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.02em;
   line-height: 1;
-}
-
-.nav-logo__img {
-  height: 52px;
-  width: auto;
-  display: block;
-  object-fit: contain;
-  /* Keep visible on dark hero overlay */
-  filter: brightness(0) invert(1);
-  transition: filter 0.35s var(--ease-smooth);
-}
-
-/* When navbar scrolled to cream bg, show logo in dark ink */
-.navbar--scrolled .nav-logo__img {
-  filter: none;
-}
-
-/* Shop page always has dark bg so logo stays dark-ink */
-.navbar--shop .nav-logo__img {
-  filter: none;
+  color: var(--color-white);
+  text-decoration: none;
+  transition: opacity 0.25s ease, color 0.35s var(--ease-smooth);
+  white-space: nowrap;
 }
 
 .nav-logo:hover {
@@ -189,8 +172,46 @@ body {
 }
 
 @media (min-width: 768px) {
-  .nav-logo__img {
-    height: 62px;
+  .nav-logo {
+    font-size: 2.95rem;
+  }
+}
+
+/* Brand logo image — far left of navbar */
+.nav-brand-logo {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-brand-logo__img {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+  /* White on dark hero */
+  filter: brightness(0) invert(1);
+  transition: filter 0.35s var(--ease-smooth), opacity 0.25s ease;
+}
+
+.nav-brand-logo:hover .nav-brand-logo__img {
+  opacity: 0.75;
+}
+
+/* On scrolled cream navbar, show natural dark ink */
+.navbar--scrolled .nav-brand-logo__img {
+  filter: none;
+}
+
+/* Shop & About pages always have cream/light navbar */
+.navbar--shop .nav-brand-logo__img {
+  filter: none;
+}
+
+@media (min-width: 768px) {
+  .nav-brand-logo__img {
+    height: 42px;
   }
 }
 
