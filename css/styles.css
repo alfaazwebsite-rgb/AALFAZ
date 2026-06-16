@@ -857,6 +857,31 @@ body {
   z-index: 2;
 }
 
+/* Mobile: Stack like the 'split' layout (Image top, text bottom in a box) */
+@media (max-width: 767px) {
+  .philosophy__image {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    background: transparent;
+  }
+  
+  .philosophy__image img {
+    order: -1;
+    height: 320px;
+    object-fit: cover;
+  }
+  
+  .philosophy__inner {
+    position: relative;
+    order: 1;
+    background: #f7f5f0;
+    padding: 3rem 2.5rem;
+    max-width: none;
+    border-radius: 0 0 var(--hero-radius) var(--hero-radius);
+  }
+}
+
 .philosophy__heading {
   font-size: 1.5rem;
   font-weight: 600;
