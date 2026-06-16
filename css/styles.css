@@ -195,7 +195,7 @@ body {
 }
 
 .nav-brand-logo__img {
-  height: 42px; /* Increased to match text optical size better */
+  height: 36px;
   width: auto;
   display: block;
   object-fit: contain;
@@ -217,21 +217,23 @@ body {
 
 @media (min-width: 768px) {
   .nav-brand-logo__img {
-    height: 52px; /* Increased to be as big as the text */
+    /* Match the visual height of the Aalfaz text (3.01rem) without growing the navbar */
+    height: 2.9rem;
   }
 }
 
 /* Mobile logo image — shown next to "Aalfaz" text on mobile, hidden on desktop */
 .nav-logo__mobile-img {
   display: inline-block;
-  height: 36px; /* Increased */
+  height: 29px;
   width: auto;
-  vertical-align: middle;
+  /* bottom aligns the image with the z baseline instead of floating above */
+  vertical-align: bottom;
   margin-left: 8px;
+  margin-bottom: 1px;
   object-fit: contain;
   filter: brightness(0) invert(1);
   transition: filter 0.35s var(--ease-smooth);
-  transform: translateY(4px); /* Pushes it down to align visually with the 'z' */
 }
 
 /* On cream navbar, mobile image goes dark */
