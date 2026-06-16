@@ -8,6 +8,40 @@
   'use strict';
   var BACKEND_URL = 'https://aalfaz-backend.netlify.app';
 
+  /* ─── Shipping Settings (loaded from Firestore) ─────────────── */
+  var _shippingSettings = null; // cached
+
+  async function getShippingSettings() {
+    if (_shippingSettings) return _shippingSettings;
+    try {
+      if (!window.firebaseDb) throw new Error('no db');
+      var fb = await import('https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js');
+      var snap = await fb.getDoc(fb.doc(window.firebaseDb, 'admin', 'settings'));
+      _shippingSettings = (snap.exists() ? snap.data().shipping : null) || {};
+    } catch (e) {
+      _shippingSettings = {};
+    }
+    return _shippingSettings;
+  }
+
+  function calcDeliveryFee(totalInr, method, settings) {
+    // method: 'cod' or 'prepaid'
+    var tiers = settings[(method === 'cod' ? 'codTiers' : 'prepaidTiers')] || [];
+    if (tiers.length === 0) {
+      // hardcoded fallback if no settings saved yet
+      return method === 'cod'
+        ? (totalInr >= 50000 ? 0 : 999) + 40  // +40 COD surcharge default
+        : (totalInr >= 50000 ? 0 : 999);
+    }
+    // Sort tiers ascending by orderValue
+    tiers = tiers.slice().sort(function(a,b){ return a.orderValue - b.orderValue; });
+    var fee = tiers[tiers.length - 1].deliveryFee; // default to last tier
+    for (var i = 0; i < tiers.length; i++) {
+      if (totalInr <= tiers[i].orderValue) { fee = tiers[i].deliveryFee; break; }
+    }
+    return fee || 0;
+  }
+
   /* ─── Cart State ────────────────────────────────────────────── */
   function getCart() {
     try { return JSON.parse(localStorage.getItem('alfaaz_cart')) || []; }
@@ -412,14 +446,19 @@
   }
 
   /* ─── COD Flow ────────────────────────────────────────────── */
-  function processCOD(btn) {
-    var orderId = 'ALF-' + Date.now().toString(36).toUpperCase();
+  async function processCOD(btn) {
+    var orderId      = 'ALF-' + Date.now().toString(36).toUpperCase();
+    var totalAmount  = getCartTotal();
+    var shippingCfg  = await getShippingSettings();
+    var codFee       = calcDeliveryFee(totalAmount, 'cod', shippingCfg);
     /* Save order in localStorage (will sync to Firebase later) */
     var order = {
       id: orderId,
       type: 'COD',
       items: getCart(),
-      total: getCartTotal(),
+      subtotal: totalAmount,
+      deliveryFee: codFee,
+      total: totalAmount + codFee,
       customer: checkoutState.details,
       date: new Date().toISOString(),
       status: 'Processing'
@@ -480,8 +519,9 @@
     }
 
     var totalAmount = getCartTotal();
-    var shipping = totalAmount >= 50000 ? 0 : 999;
-    var finalAmount = totalAmount + shipping;
+    var shippingCfg  = await getShippingSettings();
+    var shipping     = calcDeliveryFee(totalAmount, 'prepaid', shippingCfg);
+    var finalAmount  = totalAmount + shipping;
 
     try {
       // 1. Call Netlify Function — it creates the order AND returns the public key_id
@@ -601,7 +641,8 @@
     showToast('Connecting to PayPal…');
     try {
       var totalAmount = getCartTotal();
-      var shipping = totalAmount >= 50000 ? 0 : 999;
+      var shippingCfg = await getShippingSettings();
+      var shipping    = calcDeliveryFee(totalAmount, 'prepaid', shippingCfg);
       var res = await fetch(BACKEND_URL + '/.netlify/functions/paypal-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -632,7 +673,8 @@
     showToast('Connecting to PhonePe…');
     try {
       var totalAmount = getCartTotal();
-      var shipping = totalAmount >= 50000 ? 0 : 999;
+      var shippingCfg = await getShippingSettings();
+      var shipping    = calcDeliveryFee(totalAmount, 'prepaid', shippingCfg);
       var res = await fetch(BACKEND_URL + '/.netlify/functions/phonepe-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

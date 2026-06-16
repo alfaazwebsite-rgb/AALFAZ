@@ -23,14 +23,22 @@
   const EU_COUNTRIES = new Set(['DE','FR','IT','ES','NL','BE','AT','PT','PL','SE','DK','FI','GR','IE','HU','CZ','RO','BG','HR','SK','SI','LT','LV','EE','LU','MT','CY']);
 
   let activeCurrency = CURRENCIES['IN']; // Default: INR
+  let activeCountryKey = 'IN';
 
   // ── Expose globally ───────────────────────────────────────────────
-  window.AalfazRegion = {
-    getCurrency: () => activeCurrency,
-    formatPrice: formatPrice,
-    applyToPage: applyToPage,
-    setCurrencyByCountry: setCurrencyByCountry,
-  };
+  function updateGlobal() {
+    window.AalfazRegion = {
+      country:  activeCountryKey,
+      symbol:   activeCurrency.symbol,
+      code:     activeCurrency.code,
+      rate:     activeCurrency.rate,
+      getCurrency: () => activeCurrency,
+      formatPrice: formatPrice,
+      applyToPage: applyToPage,
+      setCurrencyByCountry: setCurrencyByCountry,
+    };
+  }
+  updateGlobal();
 
   // ── Format a price number (INR base) → display string ────────────
   function formatPrice(inrAmount) {
@@ -46,9 +54,13 @@
   function setCurrencyByCountry(countryCode) {
     let key = countryCode;
     if (EU_COUNTRIES.has(countryCode)) key = 'EU';
-    activeCurrency = CURRENCIES[key] || CURRENCIES['IN'];
+    if (!CURRENCIES[key]) key = 'IN';
+    activeCountryKey = key;
+    activeCurrency   = CURRENCIES[key];
+    updateGlobal();
     applyToPage();
     syncFooterSelector();
+    window.dispatchEvent(new CustomEvent('aalfaz:regionChange', { detail: window.AalfazRegion }));
   }
 
   // ── Update all price elements on the page ────────────────────────
@@ -77,10 +89,8 @@
     const sel = document.getElementById('country-selector');
     if (!sel) return;
     sel.addEventListener('change', function () {
-      const countryKey = this.value;
-      activeCurrency = CURRENCIES[countryKey] || CURRENCIES['IN'];
-      sessionStorage.setItem('aalfaz_currency_key', countryKey);
-      applyToPage();
+      sessionStorage.setItem('aalfaz_currency_key', this.value);
+      setCurrencyByCountry(this.value);
     });
   }
 
@@ -103,17 +113,19 @@
       const data = await res.json();
       const countryCode = data.country_code || 'IN';
       let key = EU_COUNTRIES.has(countryCode) ? 'EU' : countryCode;
-      if (!CURRENCIES[key]) key = 'IN'; // fallback
+      if (!CURRENCIES[key]) key = 'IN';
       sessionStorage.setItem('aalfaz_currency_key', key);
-      activeCurrency = CURRENCIES[key];
+      activeCountryKey = key;
+      activeCurrency   = CURRENCIES[key];
+      updateGlobal();
     } catch (e) {
-      // Silently fallback to INR on any error
       sessionStorage.setItem('aalfaz_currency_key', 'IN');
     }
 
     applyToPage();
     bindFooterSelector();
     syncFooterSelector();
+    window.dispatchEvent(new CustomEvent('aalfaz:regionChange', { detail: window.AalfazRegion }));
   }
 
   // Run after DOM is ready

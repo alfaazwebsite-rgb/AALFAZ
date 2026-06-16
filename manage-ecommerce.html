@@ -1,0 +1,640 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Manage Ecommerce — Aalfaz Admin</title>
+  <link rel="icon" href="logo.png" type="image/png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    :root {
+      --gold: #c9a84c;
+      --gold-light: #e8cc7a;
+      --black: #111;
+      --white: #fff;
+      --grey-light: #f7f5f0;
+      --grey-mid: #f0efea;
+      --border: rgba(0,0,0,.1);
+      --font-display: 'Cormorant Garamond', serif;
+      --font-body: 'Inter', sans-serif;
+    }
+    body { background:#0e0e0e; color:#e8e6e0; font-family:var(--font-body); min-height:100vh; }
+
+    /* ── Auth Gate ── */
+    #auth-gate {
+      position:fixed; inset:0; background:#0e0e0e; z-index:9999;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .auth-card {
+      background:#1a1a1a; border:1px solid rgba(201,168,76,.25); border-radius:20px;
+      padding:2.5rem; width:100%; max-width:380px;
+    }
+    .auth-card__logo { font-family:var(--font-display); font-size:2.5rem; font-weight:400; color:var(--gold); text-align:center; margin-bottom:.25rem; }
+    .auth-card__sub { font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; color:#666; text-align:center; margin-bottom:2rem; }
+    .auth-card__err { background:rgba(192,57,43,.15); color:#ff6b6b; border-radius:8px; padding:.6rem .9rem; font-size:.8rem; margin-bottom:1rem; display:none; }
+    .auth-field { margin-bottom:.85rem; }
+    .auth-field label { display:block; font-size:.7rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#666; margin-bottom:.4rem; }
+    .auth-field input {
+      width:100%; padding:.8rem 1rem; background:#111; border:1.5px solid rgba(255,255,255,.1);
+      border-radius:10px; color:#e8e6e0; font-size:.9rem; font-family:inherit; outline:none;
+      transition:border-color .2s;
+    }
+    .auth-field input:focus { border-color:var(--gold); }
+    .auth-btn {
+      width:100%; padding:.9rem; background:var(--gold); color:#111; border:none;
+      border-radius:9999px; font-size:.78rem; font-weight:800; letter-spacing:.12em;
+      text-transform:uppercase; cursor:pointer; transition:background .2s; margin-top:.5rem;
+    }
+    .auth-btn:hover { background:var(--gold-light); }
+    .auth-btn:disabled { opacity:.6; cursor:not-allowed; }
+
+    /* ── Main Layout ── */
+    #main-content { display:none; }
+    #main-content.visible { display:block; }
+
+    /* Header */
+    .ec-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.25rem 2rem; background:#1a1a1a; border-bottom:1px solid rgba(255,255,255,.06);
+      position:sticky; top:0; z-index:100;
+    }
+    .ec-header__brand { font-family:var(--font-display); font-size:1.6rem; color:var(--gold); }
+    .ec-header__title { font-size:.72rem; letter-spacing:.15em; text-transform:uppercase; color:#555; margin-top:.1rem; }
+    .ec-header__actions { display:flex; align-items:center; gap:.75rem; }
+    .ec-header__btn {
+      padding:.55rem 1.1rem; border-radius:9999px; font-size:.72rem; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; cursor:pointer; border:none; transition:all .2s;
+    }
+    .ec-header__btn--save { background:var(--gold); color:#111; }
+    .ec-header__btn--save:hover { background:var(--gold-light); }
+    .ec-header__btn--exit { background:rgba(255,255,255,.08); color:#aaa; border:1px solid rgba(255,255,255,.15); }
+    .ec-header__btn--exit:hover { color:#fff; border-color:rgba(255,255,255,.3); }
+
+    /* Content */
+    .ec-body { max-width:960px; margin:0 auto; padding:2.5rem 2rem 4rem; }
+
+    /* Section */
+    .ec-section { margin-bottom:3.5rem; }
+    .ec-section__title {
+      font-family:var(--font-display); font-size:2rem; font-weight:400; color:var(--gold);
+      margin-bottom:.35rem;
+    }
+    .ec-section__desc { font-size:.8rem; color:#666; margin-bottom:1.75rem; line-height:1.6; }
+
+    /* Delivery charges */
+    .delivery-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; }
+    .delivery-col__title {
+      font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:1rem; padding-bottom:.5rem;
+      border-bottom:1px solid rgba(201,168,76,.25);
+    }
+    .delivery-tier {
+      display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:.5rem; align-items:center;
+    }
+    .delivery-tier label { font-size:.7rem; color:#666; letter-spacing:.05em; text-transform:uppercase; }
+    .delivery-tier input {
+      width:100%; padding:.6rem .8rem; background:#1a1a1a; border:1.5px solid rgba(255,255,255,.1);
+      border-radius:8px; color:#e8e6e0; font-size:.85rem; font-family:inherit; outline:none;
+      transition:border-color .2s;
+    }
+    .delivery-tier input:focus { border-color:var(--gold); }
+
+    /* National / International toggles */
+    .delivery-intl-grid { display:grid; grid-template-columns:1fr 1fr; gap:2rem; margin-top:1.5rem; }
+    .delivery-intl-col__title { font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:#888; margin-bottom:.75rem; }
+    .toggle-row { display:flex; align-items:center; justify-content:space-between; padding:.6rem 0; border-bottom:1px solid rgba(255,255,255,.05); }
+    .toggle-row label { font-size:.82rem; color:#bbb; }
+    .toggle {
+      position:relative; width:44px; height:24px; flex-shrink:0;
+    }
+    .toggle input { opacity:0; width:0; height:0; }
+    .toggle-slider {
+      position:absolute; inset:0; background:#333; border-radius:9999px; cursor:pointer; transition:.3s;
+    }
+    .toggle-slider::before {
+      content:''; position:absolute; width:18px; height:18px; left:3px; top:3px;
+      background:#fff; border-radius:50%; transition:.3s;
+    }
+    .toggle input:checked + .toggle-slider { background:var(--gold); }
+    .toggle input:checked + .toggle-slider::before { transform:translateX(20px); }
+
+    /* Divider */
+    .ec-divider { border:none; border-top:1px solid rgba(255,255,255,.06); margin:3rem 0; }
+
+    /* Credentials */
+    .creds-grid { display:grid; gap:1.25rem; }
+    .cred-card {
+      background:#1a1a1a; border:1px solid rgba(255,255,255,.08); border-radius:16px;
+      overflow:hidden; transition:border-color .3s;
+    }
+    .cred-card.status-active   { border-color:rgba(39,174,96,.4); }
+    .cred-card.status-test     { border-color:rgba(243,156,18,.4); }
+    .cred-card.status-inactive { border-color:rgba(255,255,255,.08); }
+
+    .cred-card__header {
+      display:flex; align-items:center; gap:1rem; padding:1.25rem 1.5rem;
+      cursor:pointer; user-select:none;
+    }
+    .cred-card__logo { font-size:1.5rem; flex-shrink:0; }
+    .cred-card__name-wrap { flex:1; }
+    .cred-card__name { font-size:.95rem; font-weight:700; color:#e8e6e0; }
+    .cred-card__desc { font-size:.75rem; color:#666; margin-top:.15rem; }
+    .cred-card__status-wrap { display:flex; gap:.4rem; flex-shrink:0; }
+    .cred-status-btn {
+      padding:.3rem .75rem; border-radius:9999px; font-size:.68rem; font-weight:700;
+      letter-spacing:.08em; text-transform:uppercase; cursor:pointer; border:1.5px solid transparent; transition:all .2s;
+    }
+    .cred-status-btn.active   { background:rgba(39,174,96,.15); color:#27ae60; border-color:rgba(39,174,96,.4); }
+    .cred-status-btn.test     { background:rgba(243,156,18,.15); color:#f39c12; border-color:rgba(243,156,18,.4); }
+    .cred-status-btn.inactive { background:rgba(255,255,255,.05); color:#555; border-color:rgba(255,255,255,.1); }
+    .cred-status-btn.selected-active   { background:#27ae60; color:#fff; border-color:#27ae60; }
+    .cred-status-btn.selected-test     { background:#f39c12; color:#111; border-color:#f39c12; }
+    .cred-status-btn.selected-inactive { background:#444; color:#fff; border-color:#444; }
+
+    .cred-card__body { padding:0 1.5rem; max-height:0; overflow:hidden; transition:max-height .4s ease, padding .3s ease; }
+    .cred-card__body.open { max-height:600px; padding:1.25rem 1.5rem; }
+    .cred-card__body-inner { border-top:1px solid rgba(255,255,255,.06); padding-top:1.25rem; }
+
+    .cred-fields { display:grid; gap:.75rem; }
+    .cred-field label { display:block; font-size:.7rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:#666; margin-bottom:.35rem; }
+    .cred-field-input-wrap { position:relative; }
+    .cred-field input {
+      width:100%; padding:.7rem 2.5rem .7rem .9rem; background:#111; border:1.5px solid rgba(255,255,255,.1);
+      border-radius:10px; color:#e8e6e0; font-size:.85rem; font-family:inherit; outline:none;
+      transition:border-color .2s; font-family:monospace;
+    }
+    .cred-field input:focus { border-color:var(--gold); }
+    .cred-show-btn {
+      position:absolute; right:.75rem; top:50%; transform:translateY(-50%);
+      background:none; border:none; color:#666; cursor:pointer; font-size:.8rem; padding:.2rem;
+    }
+    .cred-show-btn:hover { color:#aaa; }
+    .cred-hint {
+      background:#111; border-left:2px solid var(--gold); border-radius:0 8px 8px 0;
+      padding:.75rem 1rem; margin-top:.75rem; font-size:.75rem; color:#888; line-height:1.6;
+    }
+    .cred-hint strong { color:var(--gold); }
+    .cred-hint a { color:var(--gold); text-decoration:none; }
+    .cred-no-test { background:rgba(255,255,255,.04); border-radius:8px; padding:.75rem 1rem; font-size:.78rem; color:#666; margin-top:.75rem; font-style:italic; }
+
+    /* Status indicator pill */
+    .status-pill {
+      display:inline-flex; align-items:center; gap:.35rem; font-size:.7rem; font-weight:600;
+      letter-spacing:.08em; text-transform:uppercase;
+    }
+    .status-pill__dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .status-pill.active   .status-pill__dot { background:#27ae60; }
+    .status-pill.test     .status-pill__dot { background:#f39c12; }
+    .status-pill.inactive .status-pill__dot { background:#555; }
+    .status-pill.active   { color:#27ae60; }
+    .status-pill.test     { color:#f39c12; }
+    .status-pill.inactive { color:#555; }
+
+    /* Toast */
+    .ec-toast {
+      position:fixed; bottom:2rem; left:50%; transform:translateX(-50%);
+      background:#111; color:#fff; padding:.75rem 1.5rem; border-radius:9999px;
+      font-size:.8rem; font-weight:600; border:1px solid rgba(255,255,255,.1);
+      z-index:99999; animation:toastIn .3s ease; white-space:nowrap;
+    }
+    @keyframes toastIn { from{opacity:0;transform:translateX(-50%) translateY(10px);} to{opacity:1;transform:translateX(-50%) translateY(0);} }
+
+    @media(max-width:640px) {
+      .delivery-grid, .delivery-intl-grid { grid-template-columns:1fr; }
+      .cms-prices-grid { grid-template-columns:1fr 1fr; }
+      .ec-body { padding:1.5rem 1rem 4rem; }
+      .ec-header { padding:1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth Gate -->
+<div id="auth-gate">
+  <div class="auth-card">
+    <div class="auth-card__logo">Aalfaz</div>
+    <div class="auth-card__sub">Ecommerce Management</div>
+    <div class="auth-card__err" id="auth-err"></div>
+    <div class="auth-field">
+      <label>Admin Email</label>
+      <input type="email" id="login-email" placeholder="admin@example.com" autocomplete="email" />
+    </div>
+    <div class="auth-field">
+      <label>Password</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" />
+    </div>
+    <button class="auth-btn" id="login-btn">Log In</button>
+  </div>
+</div>
+
+<!-- Main Content -->
+<div id="main-content">
+  <header class="ec-header">
+    <div>
+      <div class="ec-header__brand">Aalfaz</div>
+      <div class="ec-header__title">Manage Ecommerce</div>
+    </div>
+    <div class="ec-header__actions">
+      <button class="ec-header__btn ec-header__btn--save" id="save-all-btn">Save All Changes</button>
+      <button class="ec-header__btn ec-header__btn--exit" id="logout-btn">Logout</button>
+    </div>
+  </header>
+
+  <div class="ec-body">
+
+    <!-- ─── Delivery Charges ─────────────────────────── -->
+    <section class="ec-section">
+      <h2 class="ec-section__title">Delivery Charges</h2>
+      <p class="ec-section__desc">Set up to 5 order-value tiers for COD and Prepaid. Leave the "If order value" blank to skip that tier. Set charge to 0 for free delivery.</p>
+
+      <div class="delivery-grid">
+        <!-- COD -->
+        <div>
+          <div class="delivery-col__title">💵 Cash on Delivery (COD)</div>
+          <div class="delivery-tier" style="margin-bottom:.25rem;">
+            <label>If order value (₹)</label>
+            <label>Delivery charge (₹)</label>
+          </div>
+          <div id="cod-tiers"></div>
+        </div>
+        <!-- Prepaid -->
+        <div>
+          <div class="delivery-col__title">💳 Prepaid</div>
+          <div class="delivery-tier" style="margin-bottom:.25rem;">
+            <label>If order value (₹)</label>
+            <label>Delivery charge (₹)</label>
+          </div>
+          <div id="prepaid-tiers"></div>
+        </div>
+      </div>
+
+      <div class="delivery-intl-grid" style="margin-top:2rem;">
+        <div>
+          <div class="delivery-intl-col__title">🇮🇳 National</div>
+          <div class="toggle-row">
+            <label>COD Available</label>
+            <label class="toggle"><input type="checkbox" id="national-cod-toggle" /><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+        <div>
+          <div class="delivery-intl-col__title">🌍 International</div>
+          <div class="toggle-row">
+            <label>COD Available</label>
+            <label class="toggle"><input type="checkbox" id="intl-cod-toggle" /><span class="toggle-slider"></span></label>
+          </div>
+          <div class="toggle-row" style="margin-top:.25rem;">
+            <label>International Shipping Enabled</label>
+            <label class="toggle"><input type="checkbox" id="intl-enabled-toggle" /><span class="toggle-slider"></span></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="ec-divider" />
+
+    <!-- ─── Credentials ──────────────────────────────── -->
+    <section class="ec-section">
+      <h2 class="ec-section__title">Payment & Logistics Credentials</h2>
+      <p class="ec-section__desc">Toggle each partner's status. Active opens live credential fields. Test Mode opens sandbox/testing fields. Not Configured shows "Service unavailable" to customers for that payment method.</p>
+      <div class="creds-grid" id="creds-grid"></div>
+    </section>
+
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getFirestore, doc, getDoc, setDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDA7rlTknOIh4-FZNIfir8oyVXG1kwisLI",
+  authDomain: "aalfaz-4244d.firebaseapp.com",
+  projectId: "aalfaz-4244d",
+  storageBucket: "aalfaz-4244d.firebasestorage.app",
+  messagingSenderId: "7297252372",
+  appId: "1:7297252372:web:e70d660de7121e142bbb01"
+};
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── Partner config ──────────────────────────────────────────
+const PARTNERS = [
+  {
+    id: 'razorpay',
+    name: 'Razorpay',
+    logo: '💳',
+    desc: 'Domestic payments — UPI, Cards, Netbanking',
+    activeFields: [
+      { key:'keyId',     label:'Key ID',     hint:'Starts with rzp_live_...' },
+      { key:'keySecret', label:'Key Secret', hint:'From Razorpay dashboard' },
+    ],
+    testFields: [
+      { key:'testKeyId',     label:'Test Key ID',     hint:'Starts with rzp_test_...' },
+      { key:'testKeySecret', label:'Test Key Secret', hint:'From Razorpay Test Mode' },
+    ],
+    testHint: '🧪 Test card: <strong>4111 1111 1111 1111</strong>, any future date, any CVV<br><a href="https://dashboard.razorpay.com/app/keys" target="_blank">Open Razorpay Dashboard →</a>',
+    hasTest: true,
+  },
+  {
+    id: 'phonepe',
+    name: 'PhonePe',
+    logo: '📱',
+    desc: 'Zero-fee UPI gateway for Indian customers',
+    activeFields: [
+      { key:'merchantId', label:'Merchant ID',  hint:'From PhonePe business dashboard' },
+      { key:'saltKey',    label:'Salt Key',      hint:'Cryptographic key for X-VERIFY header' },
+      { key:'saltIndex',  label:'Salt Index',    hint:'Usually 1' },
+    ],
+    testFields: [
+      { key:'testMerchantId', label:'Test Merchant ID', hint:'PGTESTPAYUAT' },
+      { key:'testSaltKey',    label:'Test Salt Key',    hint:'099eb0cd-02cf-4e2a-8aca-3e6c6aff0399' },
+      { key:'testSaltIndex',  label:'Test Salt Index',  hint:'1' },
+    ],
+    testHint: '🧪 Default test credentials are pre-filled above (PhonePe public sandbox).<br><a href="https://business.phonepe.com/" target="_blank">Open PhonePe Business →</a>',
+    hasTest: true,
+    testDefaults: { testMerchantId:'PGTESTPAYUAT', testSaltKey:'099eb0cd-02cf-4e2a-8aca-3e6c6aff0399', testSaltIndex:'1' },
+  },
+  {
+    id: 'stripe',
+    name: 'Stripe',
+    logo: '💜',
+    desc: 'International — Cards, Apple Pay, Google Pay',
+    activeFields: [
+      { key:'secretKey',      label:'Secret Key',       hint:'Starts with sk_live_...' },
+      { key:'publishableKey', label:'Publishable Key',  hint:'Starts with pk_live_...' },
+      { key:'webhookSecret',  label:'Webhook Secret',   hint:'Optional — for webhook verification' },
+    ],
+    testFields: [
+      { key:'testSecretKey',      label:'Test Secret Key',      hint:'Starts with sk_test_... — from Stripe Dashboard' },
+      { key:'testPublishableKey', label:'Test Publishable Key', hint:'Starts with pk_test_...' },
+    ],
+    testHint: '🧪 Test card: <strong>4242 4242 4242 4242</strong>, any future date, any CVV<br><a href="https://dashboard.stripe.com/test/apikeys" target="_blank">Open Stripe Dashboard →</a>',
+    hasTest: true,
+  },
+  {
+    id: 'paypal',
+    name: 'PayPal',
+    logo: '🅿️',
+    desc: 'International — PayPal balance & global cards',
+    activeFields: [
+      { key:'clientId',     label:'Client ID',     hint:'From PayPal Developer App (Live)' },
+      { key:'clientSecret', label:'Client Secret', hint:'From PayPal Developer App (Live)' },
+    ],
+    testFields: [
+      { key:'sandboxClientId',     label:'Sandbox Client ID',     hint:'From PayPal Sandbox App' },
+      { key:'sandboxClientSecret', label:'Sandbox Client Secret', hint:'From PayPal Sandbox App' },
+    ],
+    testHint: '🧪 Create a sandbox app at <a href="https://developer.paypal.com/dashboard/applications/sandbox" target="_blank">developer.paypal.com →</a>',
+    hasTest: true,
+  },
+  {
+    id: 'shiprocket',
+    name: 'Shiprocket',
+    logo: '🚀',
+    desc: 'Shipping aggregator — 25+ courier partners',
+    activeFields: [
+      { key:'email',        label:'Email',                hint:'Email used for Shiprocket login' },
+      { key:'password',     label:'Password',             hint:'Shiprocket account password' },
+      { key:'pickupName',   label:'Pickup Location Name', hint:'e.g. Primary (set in Shiprocket dashboard)' },
+    ],
+    testFields: [],
+    testHint: '',
+    hasTest: false,
+    noTestMsg: 'Shiprocket does not offer a public sandbox environment. Use a staging account if needed.',
+  },
+];
+
+// ── State ────────────────────────────────────────────────────
+let settings = { shipping:{}, gateways:{} };
+
+// ── Auth ─────────────────────────────────────────────────────
+onAuthStateChanged(auth, user => {
+  if (user) { showMain(); loadSettings(); }
+  else       { showAuthGate(); }
+});
+
+document.getElementById('login-btn').onclick = async () => {
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('auth-err');
+  err.style.display = 'none';
+  btn.textContent = 'Logging in…'; btn.disabled = true;
+  try {
+    await signInWithEmailAndPassword(auth,
+      document.getElementById('login-email').value.trim(),
+      document.getElementById('login-pass').value
+    );
+  } catch(e) {
+    err.textContent = 'Login failed. Check your credentials.';
+    err.style.display = 'block';
+    btn.textContent = 'Log In'; btn.disabled = false;
+  }
+};
+document.getElementById('login-pass').onkeydown = e => { if(e.key==='Enter') document.getElementById('login-btn').click(); };
+document.getElementById('logout-btn').onclick   = () => signOut(auth);
+
+function showAuthGate() { document.getElementById('auth-gate').style.display='flex'; document.getElementById('main-content').classList.remove('visible'); }
+function showMain()     { document.getElementById('auth-gate').style.display='none'; document.getElementById('main-content').classList.add('visible'); buildDeliveryTiers(); buildCredentials(); }
+
+// ── Load settings ────────────────────────────────────────────
+async function loadSettings() {
+  try {
+    const snap = await getDoc(doc(db, 'admin', 'settings'));
+    if (snap.exists()) settings = snap.data();
+  } catch(e) { console.warn('Could not load settings:', e.message); }
+  populateDelivery();
+  populateCredentials();
+}
+
+// ── Save all ─────────────────────────────────────────────────
+document.getElementById('save-all-btn').onclick = async () => {
+  const btn = document.getElementById('save-all-btn');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  collectAll();
+  try {
+    await setDoc(doc(db, 'admin', 'settings'), settings, { merge:true });
+    toast('✓ All changes saved!', '#27ae60');
+  } catch(e) { toast('✗ Save failed: ' + e.message, '#c0392b'); }
+  finally { btn.textContent = 'Save All Changes'; btn.disabled = false; }
+};
+
+// ── Delivery Tiers ───────────────────────────────────────────
+function buildDeliveryTiers() {
+  ['cod','prepaid'].forEach(type => {
+    const container = document.getElementById(`${type}-tiers`);
+    container.innerHTML = '';
+    for(let i=0;i<5;i++) {
+      const row = document.createElement('div');
+      row.className = 'delivery-tier';
+      row.innerHTML = `
+        <input type="number" id="${type}-val-${i}" placeholder="e.g. 500" min="0" />
+        <input type="number" id="${type}-charge-${i}" placeholder="e.g. 40" min="0" />
+      `;
+      container.appendChild(row);
+    }
+  });
+}
+
+function populateDelivery() {
+  const s = settings.shipping || {};
+  ['cod','prepaid'].forEach(type => {
+    const tiers = s[`${type}Tiers`] || [];
+    for(let i=0;i<5;i++) {
+      const t = tiers[i] || {};
+      const valEl    = document.getElementById(`${type}-val-${i}`);
+      const chargeEl = document.getElementById(`${type}-charge-${i}`);
+      if(valEl)    valEl.value    = t.orderValue  ?? '';
+      if(chargeEl) chargeEl.value = t.deliveryFee ?? '';
+    }
+  });
+  document.getElementById('national-cod-toggle').checked = s.nationalCod    !== false;
+  document.getElementById('intl-cod-toggle').checked     = s.intlCod        === true;
+  document.getElementById('intl-enabled-toggle').checked = s.intlEnabled    !== false;
+}
+
+function collectDelivery() {
+  ['cod','prepaid'].forEach(type => {
+    const tiers = [];
+    for(let i=0;i<5;i++) {
+      const ov = parseFloat(document.getElementById(`${type}-val-${i}`)?.value);
+      const df = parseFloat(document.getElementById(`${type}-charge-${i}`)?.value);
+      if(!isNaN(ov)) tiers.push({ orderValue: ov, deliveryFee: isNaN(df)?0:df });
+    }
+    if(!settings.shipping) settings.shipping = {};
+    settings.shipping[`${type}Tiers`] = tiers;
+  });
+  settings.shipping.nationalCod = document.getElementById('national-cod-toggle').checked;
+  settings.shipping.intlCod     = document.getElementById('intl-cod-toggle').checked;
+  settings.shipping.intlEnabled = document.getElementById('intl-enabled-toggle').checked;
+}
+
+// ── Credentials ──────────────────────────────────────────────
+function buildCredentials() {
+  const grid = document.getElementById('creds-grid');
+  grid.innerHTML = '';
+  PARTNERS.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'cred-card status-inactive';
+    card.id = `cred-card-${p.id}`;
+    card.innerHTML = `
+      <div class="cred-card__header">
+        <span class="cred-card__logo">${p.logo}</span>
+        <div class="cred-card__name-wrap">
+          <div class="cred-card__name">${p.name}</div>
+          <div class="cred-card__desc">${p.desc}</div>
+        </div>
+        <div class="cred-card__status-wrap">
+          <button class="cred-status-btn inactive selected-inactive" data-partner="${p.id}" data-status="inactive">🔴 Not Configured</button>
+          <button class="cred-status-btn active" data-partner="${p.id}" data-status="active">🟢 Active</button>
+          ${p.hasTest ? `<button class="cred-status-btn test" data-partner="${p.id}" data-status="test">🟡 Test Mode</button>` : ''}
+        </div>
+      </div>
+      <div class="cred-card__body" id="cred-body-${p.id}">
+        <div class="cred-card__body-inner">
+          <div id="cred-fields-${p.id}"></div>
+        </div>
+      </div>
+    `;
+    grid.appendChild(card);
+
+    // Bind status buttons
+    card.querySelectorAll('.cred-status-btn').forEach(btn => {
+      btn.onclick = () => setPartnerStatus(p.id, btn.dataset.status, p);
+    });
+  });
+}
+
+function populateCredentials() {
+  PARTNERS.forEach(p => {
+    const gw     = (settings.gateways || {})[p.id] || {};
+    const status = gw.status || 'inactive';
+    setPartnerStatus(p.id, status, p, gw);
+  });
+}
+
+function setPartnerStatus(partnerId, status, partnerDef, existingData = {}) {
+  // Update card style
+  const card = document.getElementById(`cred-card-${partnerId}`);
+  card.className = `cred-card status-${status}`;
+
+  // Update button selection
+  card.querySelectorAll('.cred-status-btn').forEach(btn => {
+    const s = btn.dataset.status;
+    btn.className = `cred-status-btn ${s}${s===status?' selected-'+s:''}`;
+  });
+
+  // Build fields
+  const body      = document.getElementById(`cred-body-${partnerId}`);
+  const fieldsDiv = document.getElementById(`cred-fields-${partnerId}`);
+
+  if (status === 'inactive') {
+    body.classList.remove('open');
+    fieldsDiv.innerHTML = '';
+    return;
+  }
+
+  body.classList.add('open');
+
+  const fields = status === 'active' ? partnerDef.activeFields : partnerDef.testFields;
+  const hint   = status === 'active' ? '' : partnerDef.testHint;
+  const defaults = status === 'test' ? (partnerDef.testDefaults || {}) : {};
+
+  if (!partnerDef.hasTest && status === 'test') {
+    fieldsDiv.innerHTML = `<div class="cred-no-test">${partnerDef.noTestMsg}</div>`;
+    return;
+  }
+
+  fieldsDiv.innerHTML = `
+    <div class="cred-fields">
+      ${fields.map(f => `
+        <div class="cred-field">
+          <label>${f.label} <span style="color:#555;font-weight:400;text-transform:none;letter-spacing:0;margin-left:.25rem;">— ${f.hint}</span></label>
+          <div class="cred-field-input-wrap">
+            <input type="password" id="cred-${partnerId}-${f.key}"
+              value="${existingData[f.key] || defaults[f.key] || ''}"
+              placeholder="Enter ${f.label}" autocomplete="off" />
+            <button type="button" class="cred-show-btn" title="Show/hide" onclick="this.previousElementSibling.type=this.previousElementSibling.type==='password'?'text':'password';this.textContent=this.previousElementSibling.type==='password'?'👁':'🙈'">👁</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+    ${hint ? `<div class="cred-hint">${hint}</div>` : ''}
+  `;
+
+  // Store current status on the card for collect
+  card.dataset.currentStatus = status;
+}
+
+function collectCredentials() {
+  if (!settings.gateways) settings.gateways = {};
+  PARTNERS.forEach(p => {
+    const card   = document.getElementById(`cred-card-${p.id}`);
+    const status = card.dataset.currentStatus || 'inactive';
+    const gw     = { status };
+
+    const fields = status === 'active' ? p.activeFields : (status === 'test' ? p.testFields : []);
+    fields.forEach(f => {
+      const inp = document.getElementById(`cred-${p.id}-${f.key}`);
+      if (inp) gw[f.key] = inp.value.trim();
+    });
+    settings.gateways[p.id] = gw;
+  });
+}
+
+function collectAll() { collectDelivery(); collectCredentials(); }
+
+// ── Toast ─────────────────────────────────────────────────────
+function toast(msg, color='#111') {
+  const t = document.createElement('div');
+  t.className='ec-toast'; t.textContent=msg;
+  t.style.background=color; if(color==='#27ae60') t.style.color='#fff';
+  document.body.appendChild(t);
+  setTimeout(()=>t.remove(), 3000);
+}
+</script>
+</body>
+</html>
