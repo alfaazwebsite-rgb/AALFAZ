@@ -156,7 +156,7 @@ body {
   left: 50%;
   transform: translateX(-50%);
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* aligns image bottom with text baseline */
   justify-content: center;
   font-family: var(--font-logo);
   font-size: 2.35rem; /* +2% from 2.3 */
@@ -217,18 +217,16 @@ body {
 
 @media (min-width: 768px) {
   .nav-brand-logo__img {
-    height: 1.6rem; /* visually matches nav-link scale, doesn't grow navbar */
+    height: 3rem; /* matches the Aalfaz text height */
   }
 }
 
 /* Mobile logo image — shown next to "Aalfaz" text on mobile, hidden on desktop */
 .nav-logo__mobile-img {
   display: inline-block;
-  height: 1.7rem; /* close to the 1.9rem mobile text size */
+  height: 1.9rem; /* matches 1.9rem mobile Aalfaz text */
   width: auto;
-  vertical-align: bottom;
   margin-left: 6px;
-  margin-bottom: 1px;
   object-fit: contain;
   filter: brightness(0) invert(1);
   transition: filter 0.35s var(--ease-smooth);
