@@ -109,6 +109,7 @@
           <div class="hero__slider" id="hero-slider">
             <div class="hero__slide hero__slide--active">
               <img
+                data-cms-key="hero.images.0"
                 src="https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778827257/Hero_1_tyebo9_469b5c.webp"
                 alt="Alfaaz — Limited Edition Collection"
                 class="hero__image"
@@ -117,6 +118,7 @@
             </div>
             <div class="hero__slide">
               <img
+                data-cms-key="hero.images.1"
                 src="https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778827475/Hero_2_jzhmui_c725c5.webp"
                 alt="Alfaaz — Elegance Redefined"
                 class="hero__image"
@@ -124,6 +126,7 @@
             </div>
             <div class="hero__slide">
               <img
+                data-cms-key="hero.images.2"
                 src="https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778827873/Hero_3_etehtr_df7353.webp"
                 alt="Alfaaz — Crafted for You"
                 class="hero__image"
@@ -137,9 +140,9 @@
 
         <!-- Hero Copy -->
         <div class="hero__content">
-          <p class="hero__eyebrow">Limited Edition</p>
-          <h1 class="hero__headline">Elegance<br>Redefined.</h1>
-          <a href="#collection" class="hero__cta" role="button">Shop the Collection</a>
+          <p class="hero__eyebrow" data-cms-key="hero.eyebrow">Limited Edition</p>
+          <h1 class="hero__headline" data-cms-key="hero.headline">Elegance<br>Redefined.</h1>
+          <a href="#collection" class="hero__cta" role="button" data-cms-key="hero.cta">Shop the Collection</a>
         </div>
 
         <!-- Scroll indicator -->
@@ -585,6 +588,8 @@
     <script src="js/shop-dropdown.js"></script>
     <script src="js/hero-slideshow.js"></script>
     <script src="js/split-parallax.js"></script>
+    <script type="module" src="js/cms.js"></script>
+    <script src="js/main.js"></script>
     <script src="js/ecommerce.js"></script>
   </body>
 </html>
