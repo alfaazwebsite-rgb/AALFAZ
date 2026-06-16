@@ -182,10 +182,16 @@ body {
 
 /* Brand logo image — far left of navbar, desktop only */
 .nav-brand-logo {
-  display: none; /* hidden on mobile */
-  align-items: center;
+  display: none;
   text-decoration: none;
   flex-shrink: 0;
+  /* Fixed height = invisible box. Flex layout sees this small height only.
+     The image inside overflows freely without growing the navbar. */
+  height: 1.2rem;
+  overflow: visible;
+  align-items: center;
+  justify-content: center;
+  position: relative;
 }
 
 @media (min-width: 768px) {
@@ -195,12 +201,14 @@ body {
 }
 
 .nav-brand-logo__img {
-  height: 36px;
+  /* Free to be any size — overflows the invisible box */
+  height: 3rem;
   width: auto;
   display: block;
   object-fit: contain;
   filter: brightness(0) invert(1);
   transition: filter 0.35s var(--ease-smooth), opacity 0.25s ease;
+  position: relative;
 }
 
 .nav-brand-logo:hover .nav-brand-logo__img {
@@ -213,12 +221,6 @@ body {
 
 .navbar--shop .nav-brand-logo__img {
   filter: none;
-}
-
-@media (min-width: 768px) {
-  .nav-brand-logo__img {
-    height: 3rem; /* matches the Aalfaz text height */
-  }
 }
 
 /* Mobile logo image — shown next to "Aalfaz" text on mobile, hidden on desktop */
