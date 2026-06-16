@@ -407,14 +407,97 @@
     if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
   }
 
-  /* ─── Online Payment (Razorpay placeholder) ───────────────── */
-  function processOnlinePayment(btn) {
-    /* NOTE: When Firebase + Vercel backend is integrated,
-       this function will call the backend to create a Razorpay order ID,
-       then open the Razorpay checkout widget.
-       For now it shows a placeholder message. */
-    showToast('Online payment will be enabled after backend integration');
-    if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+  /* ─── Online Payment (Razorpay Integration) ───────────────── */
+  function loadRazorpayScript() {
+    return new Promise(function(resolve) {
+      if (window.Razorpay) {
+        resolve(true);
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+      script.onload = function() { resolve(true); };
+      script.onerror = function() { resolve(false); };
+      document.body.appendChild(script);
+    });
+  }
+
+  async function processOnlinePayment(btn) {
+    var isLoaded = await loadRazorpayScript();
+    if (!isLoaded) {
+      showToast('Failed to load payment gateway. Please check your connection.');
+      if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+      return;
+    }
+
+    var totalAmount = getCartTotal();
+    var shipping = totalAmount >= 50000 ? 0 : 999;
+    var finalAmount = totalAmount + shipping;
+
+    try {
+      // 1. Ask Netlify Function to create an order
+      var res = await fetch('/.netlify/functions/create-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: finalAmount })
+      });
+      
+      var orderData = await res.json();
+      if (!res.ok) throw new Error(orderData.error || 'Failed to initialize payment');
+
+      // 2. Open Razorpay Widget
+      var options = {
+        key: 'RAZORPAY_KEY_ID_PLACEHOLDER', // You can replace this if needed, but Razorpay widget requires key on frontend. If left empty, order creation verifies it. Actually, Razorpay SDK REQUIRES the key on frontend.
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "Alfaaz",
+        description: "Jewelry Purchase",
+        order_id: orderData.id,
+        handler: async function (response) {
+          // 3. Verify Payment with Netlify Function
+          showToast('Verifying payment...');
+          try {
+            var verifyRes = await fetch('/.netlify/functions/verify-payment', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(response)
+            });
+            var verifyData = await verifyRes.json();
+            if (verifyData.status === 'success') {
+              showToast('Payment Successful! Thank you.');
+              // Clear cart and show success
+              cart = [];
+              saveCart(cart);
+              document.getElementById('checkout-modal-form-step').style.display = 'none';
+              document.getElementById('checkout-modal-success-step').style.display = 'flex';
+              document.getElementById('whatsapp-btn').style.display = 'none'; // hide WA for online
+            } else {
+              showToast('Payment verification failed.');
+            }
+          } catch (e) {
+            showToast('Verification error.');
+          }
+        },
+        prefill: {
+          name: document.getElementById('co-fname').value + ' ' + document.getElementById('co-lname').value,
+          email: document.getElementById('co-email').value,
+          contact: document.getElementById('co-phone').value
+        },
+        theme: { color: "#111111" }
+      };
+
+      var rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+        showToast('Payment failed. Try again.');
+      });
+      rzp.open();
+
+    } catch (err) {
+      console.error(err);
+      showToast('Error connecting to payment server.');
+    } finally {
+      if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+    }
   }
 
   /* ─── Expose Globals ─────────────────────────────────────── */
