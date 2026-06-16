@@ -1,0 +1,12 @@
+{
+  "name": "aalfaz-backend",
+  "version": "1.0.0",
+  "description": "Backend for Aalfaz Razorpay Integration",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "razorpay": "^2.9.2"
+  }
+}
