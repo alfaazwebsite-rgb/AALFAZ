@@ -16,6 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="css/styles.css?v=12" />
+    <link rel="stylesheet" href="css/auth.css" />
     <style>
       /* ── About Page Specific Styles ── */
       .about-hero {
@@ -352,7 +353,7 @@
         <!-- Right Links -->
         <nav class="nav-links nav-links--right" aria-label="Primary navigation right">
           <a href="#" class="nav-link nav-link--desktop">Search</a>
-          <a href="#" class="nav-link nav-link--desktop">Account</a>
+          <button class="nav-link nav-link--desktop nav-account-trigger" id="account-btn" aria-label="Open account">Account</button>
           <a href="cart.html" class="nav-link" id="cart-link" style="display:flex;align-items:center;gap:0.5rem">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             <span class="cart-count-text">Cart</span>
@@ -367,7 +368,7 @@
         <a href="shop.html" class="mobile-menu__link">Shop</a>
         <a href="about.html" class="mobile-menu__link">About</a>
         <a href="#" class="mobile-menu__link">Search</a>
-        <a href="#" class="mobile-menu__link">Account</a>
+        <button class="mobile-menu__link" data-account="true" style="background:none;border:none;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;">Account</button>
         <a href="cart.html" class="mobile-menu__link cart-count-text">Cart</a>
       </nav>
     </div>
@@ -612,5 +613,7 @@
     <script src="js/footer-parallax.js"></script>
     <script src="js/footer-contact.js"></script>
     <script src="js/ecommerce.js"></script>
+    <script src="js/region.js"></script>
+    <script type="module" src="js/account-drawer.js"></script>
   </body>
 </html>
