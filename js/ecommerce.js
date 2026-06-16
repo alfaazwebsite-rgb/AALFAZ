@@ -6,6 +6,7 @@
 
 (function () {
   'use strict';
+  var BACKEND_URL = 'https://aalfaz-backend.netlify.app';
 
   /* ─── Cart State ────────────────────────────────────────────── */
   function getCart() {
@@ -484,7 +485,7 @@
 
     try {
       // 1. Call Netlify Function — it creates the order AND returns the public key_id
-      var res = await fetch('/.netlify/functions/create-order', {
+      var res = await fetch(BACKEND_URL + '/.netlify/functions/create-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: finalAmount })
@@ -510,12 +511,12 @@
         currency: orderData.currency,
         name: 'Alfaaz',
         description: 'Jewelry Purchase',
-        image: 'https://aalfaz-4244d.web.app/images/logo.png',
+        image: 'https://aalfaz-4244d.web.app/logo.png',
         order_id: orderData.id,
         handler: async function (response) {
           showToast('Verifying payment…');
           try {
-            var verifyRes = await fetch('/.netlify/functions/verify-payment', {
+            var verifyRes = await fetch(BACKEND_URL + '/.netlify/functions/verify-payment', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify(response)
@@ -568,7 +569,7 @@
   async function processStripePayment(btn) {
     showToast('Connecting to Stripe…');
     try {
-      var res = await fetch('/.netlify/functions/create-stripe-session', {
+      var res = await fetch(BACKEND_URL + '/.netlify/functions/create-stripe-session', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -601,7 +602,7 @@
     try {
       var totalAmount = getCartTotal();
       var shipping = totalAmount >= 50000 ? 0 : 999;
-      var res = await fetch('/.netlify/functions/paypal-order', {
+      var res = await fetch(BACKEND_URL + '/.netlify/functions/paypal-order', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ amount: totalAmount + shipping })
@@ -632,7 +633,7 @@
     try {
       var totalAmount = getCartTotal();
       var shipping = totalAmount >= 50000 ? 0 : 999;
-      var res = await fetch('/.netlify/functions/phonepe-checkout', {
+      var res = await fetch(BACKEND_URL + '/.netlify/functions/phonepe-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
