@@ -7,10 +7,11 @@ let isAdminMode = false;
 let auth;
 let db;
 
-document.addEventListener('DOMContentLoaded', () => {
-  // Wait a tick for firebase-config.js to initialize window.firebaseAuth
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => setTimeout(initCMS, 100));
+} else {
   setTimeout(initCMS, 100);
-});
+}
 
 async function initCMS() {
   if (!window.firebaseAuth || !window.firebaseDb) {
