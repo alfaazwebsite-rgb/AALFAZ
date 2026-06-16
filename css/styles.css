@@ -1001,7 +1001,7 @@ body {
   transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* Reversed — image on LEFT, text on RIGHT */
+/* Reversed — text on LEFT, image on RIGHT */
 .split--reversed .split__text {
   order: 1;
 }
@@ -1012,10 +1012,10 @@ body {
 
 @media (min-width: 768px) {
   .split--reversed .split__image {
-    order: 1;
+    order: 2;
   }
   .split--reversed .split__text {
-    order: 2;
+    order: 1;
   }
 }
 
