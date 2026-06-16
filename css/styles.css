@@ -150,13 +150,16 @@ body {
   }
 }
 
-/* Logo — serif wordmark (centred) */
+/* Logo — serif wordmark (centred) + mobile flex container */
 .nav-logo {
   position: absolute;
   left: 50%;
   transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   font-family: var(--font-logo);
-  font-size: 2.3rem;
+  font-size: 2.35rem; /* +2% from 2.3 */
   font-weight: 400;
   font-style: normal;
   letter-spacing: 0.02em;
@@ -173,7 +176,7 @@ body {
 
 @media (min-width: 768px) {
   .nav-logo {
-    font-size: 2.95rem;
+    font-size: 3.01rem; /* +2% from 2.95 */
   }
 }
 
@@ -214,26 +217,20 @@ body {
 
 @media (min-width: 768px) {
   .nav-brand-logo__img {
-    height: 42px;
+    height: 43px; /* +2% from 42 */
   }
 }
 
 /* Mobile logo image — shown next to "Aalfaz" text on mobile, hidden on desktop */
 .nav-logo__mobile-img {
   display: inline-block;
-  height: 28px;
+  height: 29px; /* +2% from 28 */
   width: auto;
   vertical-align: middle;
   margin-left: 8px;
   object-fit: contain;
   filter: brightness(0) invert(1);
   transition: filter 0.35s var(--ease-smooth);
-}
-
-/* Update nav-logo to flex so text + image sit inline together */
-.nav-logo {
-  display: flex;
-  align-items: center;
 }
 
 /* On cream navbar, mobile image goes dark */
