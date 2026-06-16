@@ -202,7 +202,7 @@
         /* Step 1 — Method */
         '<div id="checkout-step-1">',
           '<p class="checkout-modal__step-label">Select Payment Method</p>',
-          '<div class="checkout-modal__methods">',
+          '<div class="checkout-modal__methods" style="max-height: 50vh; overflow-y: auto; padding-right: 5px;">',
             '<button class="checkout-method-btn" id="method-cod">',
               '<div class="checkout-method-btn__icon">',
                 '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>',
@@ -212,13 +212,40 @@
                 '<div class="checkout-method-btn__sub">Pay when you receive your order</div>',
               '</div>',
             '</button>',
-            '<button class="checkout-method-btn" id="method-online">',
+            '<button class="checkout-method-btn" id="method-razorpay">',
               '<div class="checkout-method-btn__icon">',
                 '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
               '</div>',
               '<div>',
-                '<div class="checkout-method-btn__title">Online Payment</div>',
-                '<div class="checkout-method-btn__sub">Secure payment via Razorpay</div>',
+                '<div class="checkout-method-btn__title">Cards / UPI (Razorpay)</div>',
+                '<div class="checkout-method-btn__sub">Domestic Payments</div>',
+              '</div>',
+            '</button>',
+            '<button class="checkout-method-btn" id="method-phonepe">',
+              '<div class="checkout-method-btn__icon">',
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>',
+              '</div>',
+              '<div>',
+                '<div class="checkout-method-btn__title">PhonePe</div>',
+                '<div class="checkout-method-btn__sub">Zero Fee UPI / Wallets</div>',
+              '</div>',
+            '</button>',
+            '<button class="checkout-method-btn" id="method-stripe">',
+              '<div class="checkout-method-btn__icon">',
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>',
+              '</div>',
+              '<div>',
+                '<div class="checkout-method-btn__title">Stripe (International)</div>',
+                '<div class="checkout-method-btn__sub">Apple Pay / Google Pay / Cards</div>',
+              '</div>',
+            '</button>',
+            '<button class="checkout-method-btn" id="method-paypal">',
+              '<div class="checkout-method-btn__icon">',
+                '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M7 11V7a5 5 0 0 1 10 0v4"/><path d="M5.5 11h13a1.5 1.5 0 0 1 1.5 1.5v8A1.5 1.5 0 0 1 18.5 22h-13A1.5 1.5 0 0 1 4 20.5v-8A1.5 1.5 0 0 1 5.5 11z"/></svg>',
+              '</div>',
+              '<div>',
+                '<div class="checkout-method-btn__title">PayPal</div>',
+                '<div class="checkout-method-btn__sub">USD / EUR Global Payments</div>',
               '</div>',
             '</button>',
           '</div>',
@@ -327,8 +354,23 @@
       showCheckoutStep(2);
     });
 
-    document.getElementById('method-online').addEventListener('click', function () {
-      checkoutState.method = 'ONLINE';
+    document.getElementById('method-razorpay').addEventListener('click', function () {
+      checkoutState.method = 'RAZORPAY';
+      showCheckoutStep(2);
+    });
+
+    document.getElementById('method-phonepe').addEventListener('click', function () {
+      checkoutState.method = 'PHONEPE';
+      showCheckoutStep(2);
+    });
+
+    document.getElementById('method-stripe').addEventListener('click', function () {
+      checkoutState.method = 'STRIPE';
+      showCheckoutStep(2);
+    });
+
+    document.getElementById('method-paypal').addEventListener('click', function () {
+      checkoutState.method = 'PAYPAL';
       showCheckoutStep(2);
     });
 
@@ -351,10 +393,15 @@
 
       if (checkoutState.method === 'COD') {
         processCOD(btn);
-      } else {
+      } else if (checkoutState.method === 'RAZORPAY') {
         processOnlinePayment(btn);
+      } else if (checkoutState.method === 'STRIPE') {
+        processStripePayment(btn);
+      } else if (checkoutState.method === 'PAYPAL') {
+        processPayPalPayment(btn);
+      } else if (checkoutState.method === 'PHONEPE') {
+        processPhonePePayment(btn);
       }
-    });
 
     document.getElementById('checkout-continue-btn').addEventListener('click', function () {
       closeCheckout();
@@ -496,6 +543,84 @@
       console.error(err);
       showToast('Error connecting to payment server.');
     } finally {
+      if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+    }
+  }
+
+  /* ─── Stripe Payment ───────────────────────────────────────── */
+  async function processStripePayment(btn) {
+    showToast('Redirecting to Stripe...');
+    try {
+      var res = await fetch('/.netlify/functions/create-stripe-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          items: cart,
+          success_url: window.location.origin + '/cart.html?payment=success',
+          cancel_url: window.location.origin + '/cart.html?payment=cancelled'
+        })
+      });
+      var data = await res.json();
+      if (res.ok && data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || 'Failed to connect to Stripe');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Stripe checkout failed.');
+      if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+    }
+  }
+
+  /* ─── PayPal Payment ───────────────────────────────────────── */
+  async function processPayPalPayment(btn) {
+    showToast('Initializing PayPal...');
+    try {
+      var totalAmount = getCartTotal();
+      var shipping = totalAmount >= 50000 ? 0 : 999;
+      var res = await fetch('/.netlify/functions/paypal-order', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ amount: totalAmount + shipping })
+      });
+      var data = await res.json();
+      if (res.ok && data.links) {
+        var approvalLink = data.links.find(link => link.rel === 'approve');
+        if (approvalLink) window.location.href = approvalLink.href;
+      } else {
+        throw new Error(data.error || 'Failed to connect to PayPal');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('PayPal checkout failed.');
+      if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
+    }
+  }
+
+  /* ─── PhonePe Payment ──────────────────────────────────────── */
+  async function processPhonePePayment(btn) {
+    showToast('Redirecting to PhonePe...');
+    try {
+      var totalAmount = getCartTotal();
+      var shipping = totalAmount >= 50000 ? 0 : 999;
+      var res = await fetch('/.netlify/functions/phonepe-checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          amount: totalAmount + shipping,
+          transactionId: 'ALF-' + Date.now().toString(36).toUpperCase()
+        })
+      });
+      var data = await res.json();
+      if (res.ok && data.data && data.data.instrumentResponse && data.data.instrumentResponse.redirectInfo) {
+        window.location.href = data.data.instrumentResponse.redirectInfo.url;
+      } else {
+        throw new Error(data.error || 'Failed to connect to PhonePe');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('PhonePe checkout failed.');
       if (btn) { btn.textContent = 'Place Order'; btn.disabled = false; }
     }
   }
