@@ -95,7 +95,7 @@ body {
 }
 
 .navbar--scrolled .nav-logo {
-  color: var(--color-olive);
+  color: #6d7c5e;
 }
 
 .navbar--scrolled .nav-hamburger {
@@ -177,12 +177,18 @@ body {
   }
 }
 
-/* Brand logo image — far left of navbar */
+/* Brand logo image — far left of navbar, desktop only */
 .nav-brand-logo {
-  display: flex;
+  display: none; /* hidden on mobile */
   align-items: center;
   text-decoration: none;
   flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+  .nav-brand-logo {
+    display: flex;
+  }
 }
 
 .nav-brand-logo__img {
@@ -190,7 +196,6 @@ body {
   width: auto;
   display: block;
   object-fit: contain;
-  /* White on dark hero */
   filter: brightness(0) invert(1);
   transition: filter 0.35s var(--ease-smooth), opacity 0.25s ease;
 }
@@ -199,12 +204,10 @@ body {
   opacity: 0.75;
 }
 
-/* On scrolled cream navbar, show natural dark ink */
 .navbar--scrolled .nav-brand-logo__img {
   filter: none;
 }
 
-/* Shop & About pages always have cream/light navbar */
 .navbar--shop .nav-brand-logo__img {
   filter: none;
 }
@@ -214,6 +217,41 @@ body {
     height: 42px;
   }
 }
+
+/* Mobile logo image — shown next to "Aalfaz" text on mobile, hidden on desktop */
+.nav-logo__mobile-img {
+  display: inline-block;
+  height: 28px;
+  width: auto;
+  vertical-align: middle;
+  margin-left: 8px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transition: filter 0.35s var(--ease-smooth);
+}
+
+/* Update nav-logo to flex so text + image sit inline together */
+.nav-logo {
+  display: flex;
+  align-items: center;
+}
+
+/* On cream navbar, mobile image goes dark */
+.navbar--scrolled .nav-logo__mobile-img {
+  filter: none;
+}
+
+.navbar--shop .nav-logo__mobile-img {
+  filter: none;
+}
+
+/* On desktop, hide the inline mobile image (brand logo on left handles it) */
+@media (min-width: 768px) {
+  .nav-logo__mobile-img {
+    display: none;
+  }
+}
+
 
 /* Hamburger */
 .nav-hamburger {
