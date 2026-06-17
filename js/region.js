@@ -95,10 +95,16 @@
     document.querySelectorAll('[data-price-inr]').forEach(el => {
       const inr = parseFloat(el.dataset.priceInr);
       if (!isNaN(inr)) {
-        // Also check if element has a per-country prices map
         let prices = null;
         try { prices = el.dataset.prices ? JSON.parse(el.dataset.prices) : null; } catch(_) {}
-        el.textContent = formatPrice(inr, prices);
+        const formatted = formatPrice(inr, prices);
+        // Price span — just update text
+        if (el.tagName !== 'BUTTON') {
+          el.textContent = formatted;
+        } else if (el.dataset.ctaName) {
+          // CTA button — rebuild "BUY NAME — PRICE"
+          el.textContent = 'BUY ' + el.dataset.ctaName + ' \u2014 ' + formatted;
+        }
       }
     });
   }
