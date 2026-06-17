@@ -320,7 +320,8 @@
     
     <script type="module">
       import { signUpWithEmail, signInWithEmail, signInWithGoogle, signOutUser, resetPassword, getUserProfile, onAuthChange, getAuthErrorMessage } from './js/auth.js';
-      import { db, doc, setDoc, updateDoc } from './js/firebase-config.js';
+      import { db } from './js/firebase-config.js';
+      import { doc, setDoc, updateDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
       const authView = document.getElementById('auth-view');
       const acctView = document.getElementById('account-view');
