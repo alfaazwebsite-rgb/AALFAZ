@@ -2447,4 +2447,275 @@ body.menu-open {
 #footer-contact-toggle:hover {
   text-decoration: underline;
 }
+
+/* ═══════════════════════════════════════════════════════════
+   SEARCH FEATURE
+   Desktop: fixed drop panel under navbar pill
+   Mobile:  inline expansion inside the hamburger drawer
+═══════════════════════════════════════════════════════════ */
+
+/* ── Desktop Overlay Panel ──────────────────────────────── */
+#alf-search-overlay {
+  display: none; /* hidden on mobile, shown via media query */
+  position: fixed;
+  top: 90px;           /* sits just below the navbar pill */
+  left: 35px;
+  right: 35px;
+  z-index: 98;         /* below navbar z-index:100, above everything else */
+  background: #f7f5f0;
+  border-radius: 16px;
+  padding: 1.25rem 1.75rem 1rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.14), 0 4px 12px rgba(0,0,0,0.06);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+@media (min-width: 768px) {
+  #alf-search-overlay {
+    display: block;
+  }
+}
+
+#alf-search-overlay.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Shared Input Row ───────────────────────────────────── */
+.alf-search-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-bottom: 1.5px solid rgba(0,0,0,0.09);
+  padding-bottom: 0.9rem;
+}
+
+.alf-search-icon {
+  flex-shrink: 0;
+  color: #aaa;
+}
+
+.alf-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-family: 'Inter', sans-serif;
+  font-size: 1rem;
+  color: #111;
+  outline: none;
+  letter-spacing: 0.01em;
+  min-width: 0;
+}
+
+.alf-search-input::placeholder {
+  color: #c0bbb4;
+}
+
+.alf-search-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #aaa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  border-radius: 50%;
+  transition: color 0.18s ease, background 0.18s ease;
+  flex-shrink: 0;
+}
+
+.alf-search-close:hover {
+  color: #111;
+  background: rgba(0,0,0,0.07);
+}
+
+/* ── Results List ───────────────────────────────────────── */
+.alf-search-results {
+  display: none;
+  max-height: 320px;
+  overflow-y: auto;
+  margin-top: 0.4rem;
+  /* smooth scrollbar */
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0,0,0,0.12) transparent;
+}
+
+.alf-search-results::-webkit-scrollbar {
+  width: 4px;
+}
+.alf-search-results::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.12);
+  border-radius: 4px;
+}
+
+.alf-search-results.is-open {
+  display: block;
+}
+
+.alf-search-result-item {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.65rem 0.5rem;
+  text-decoration: none;
+  color: inherit;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  border-radius: 10px;
+  transition: background 0.15s ease;
+  cursor: pointer;
+}
+
+.alf-search-result-item:last-child {
+  border-bottom: none;
+}
+
+.alf-search-result-item:hover {
+  background: rgba(0,0,0,0.04);
+}
+
+.alf-search-result-img {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: #e8e4dc;
+}
+
+.alf-search-result-img--placeholder {
+  background: #e8e4dc;
+  display: block;
+}
+
+.alf-search-result-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.alf-search-result-name {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.01em;
+}
+
+.alf-search-result-price {
+  font-size: 0.78rem;
+  color: #999;
+  margin-top: 0.15rem;
+  font-weight: 500;
+}
+
+.alf-search-empty {
+  font-size: 0.85rem;
+  color: #bbb;
+  text-align: center;
+  padding: 1.1rem 0 0.5rem;
+  margin: 0;
+  font-style: italic;
+}
+
+/* ── Mobile Search Panel ────────────────────────────────── */
+#alf-mobile-search-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  padding: 0;
+  text-align: center;
+  letter-spacing: inherit;
+  font-size: inherit;
+  font-weight: inherit;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#alf-mobile-search-btn:hover {
+  opacity: 0.5;
+}
+
+.alf-mobile-search-panel {
+  width: 100%;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alf-mobile-search-panel.is-open {
+  max-height: 520px;
+}
+
+.alf-mobile-search-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.07);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0 0.4rem;
+  border: 1px solid rgba(255,255,255,0.13);
+}
+
+.alf-search-input--mobile {
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.alf-search-input--mobile::placeholder {
+  color: rgba(255,255,255,0.35);
+}
+
+.alf-mobile-search-inner .alf-search-icon {
+  color: rgba(255,255,255,0.4);
+}
+
+/* Mobile results list - dark theme to match drawer */
+.alf-search-results--mobile {
+  border-radius: 12px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 0.75rem;
+  max-height: 260px;
+}
+
+.alf-search-results--mobile .alf-search-result-item {
+  border-bottom-color: rgba(255,255,255,0.07);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0;
+}
+
+.alf-search-results--mobile .alf-search-result-item:first-child {
+  border-radius: 12px 12px 0 0;
+}
+
+.alf-search-results--mobile .alf-search-result-item:last-child {
+  border-radius: 0 0 12px 12px;
+  border-bottom: none;
+}
+
+.alf-search-results--mobile .alf-search-result-item:hover {
+  background: rgba(255,255,255,0.08);
+}
+
+.alf-search-results--mobile .alf-search-result-name {
+  color: #fff;
+}
+
+.alf-search-results--mobile .alf-search-result-price {
+  color: rgba(255,255,255,0.45);
+}
+
+.alf-search-results--mobile .alf-search-empty {
+  color: rgba(255,255,255,0.35);
+}
 
