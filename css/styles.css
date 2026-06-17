@@ -403,7 +403,7 @@ body {
 .hero__content {
   position: absolute;
   bottom: 2.5rem;
-  left: 1.5rem;
+  left: 2rem;
   color: var(--color-white);
   z-index: 5;
   /* Fade-up entrance */
