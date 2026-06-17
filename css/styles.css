@@ -128,11 +128,17 @@ body {
   text-decoration: none;
   font-size: 0.85rem;
   font-weight: 700;
+  font-family: inherit;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   opacity: 1;
   padding: 4px 0;
   transition: opacity 0.2s ease;
+  /* Button reset — so <button class="nav-link"> looks identical to <a> */
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: inherit;
 }
 
 .nav-link:hover {
@@ -1439,9 +1445,18 @@ body {
 .footer__link {
   font-size: 13px;
   font-weight: 500;
+  font-family: inherit;
   color: #1A1A1A;
   text-decoration: none;
   transition: opacity 0.2s ease;
+  /* Button reset — so <button class="footer__link"> looks identical to <a> */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  line-height: inherit;
+  text-align: left;
+  display: block;
 }
 
 .footer__link:hover {
