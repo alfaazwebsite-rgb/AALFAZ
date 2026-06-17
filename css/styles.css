@@ -2627,21 +2627,41 @@ body.menu-open {
   background: none;
   border: none;
   cursor: pointer;
-  font: inherit;
-  color: inherit;
+  /* Do NOT set font/font-size/font-weight/letter-spacing here —
+     they are inherited correctly from .mobile-menu__link (2rem, 800) */
+  color: var(--color-white);
   padding: 0;
   text-align: center;
-  letter-spacing: inherit;
-  font-size: inherit;
-  font-weight: inherit;
   opacity: 0.9;
   transition: opacity 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+  display: block;
 }
 
 #alf-mobile-search-btn:hover {
   opacity: 0.5;
+}
+
+/* Close button inside the mobile search input row */
+.alf-mobile-search-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255,255,255,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: color 0.18s ease, background 0.18s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.alf-mobile-search-close:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.12);
 }
 
 .alf-mobile-search-panel {

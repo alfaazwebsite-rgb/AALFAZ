@@ -50,6 +50,12 @@ mobilePanel.innerHTML = `
     </svg>
     <input type="text" id="alf-mobile-search-input" class="alf-search-input alf-search-input--mobile"
            placeholder="Search products…" autocomplete="off" spellcheck="false" />
+    <button id="alf-mobile-search-close" class="alf-mobile-search-close" aria-label="Close search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round">
+        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+    </button>
   </div>
   <div id="alf-mobile-search-results" class="alf-search-results alf-search-results--mobile"
        role="listbox" aria-label="Search results"></div>
@@ -179,6 +185,7 @@ if (desktopInput) {
 var mobileTriggerBtn = document.getElementById('alf-mobile-search-btn');
 var mobileInput      = document.getElementById('alf-mobile-search-input');
 var mobileResults    = document.getElementById('alf-mobile-search-results');
+var mobileCloseBtn   = document.getElementById('alf-mobile-search-close');
 
 function openMobile() {
   mobilePanel.classList.add('is-open');
@@ -197,6 +204,13 @@ if (mobileTriggerBtn) {
   mobileTriggerBtn.addEventListener('click', function(e) {
     e.preventDefault();
     mobilePanel.classList.contains('is-open') ? closeMobile() : openMobile();
+  });
+}
+
+if (mobileCloseBtn) {
+  mobileCloseBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    closeMobile();
   });
 }
 
