@@ -368,7 +368,7 @@
           await signInWithEmail(em, pw);
           window.location.href = 'index.html';
         } catch(err) {
-          showError('signin-error', getAuthErrorMessage(err));
+          showError('signin-error', getAuthErrorMessage(err.code));
           btn.textContent = 'Sign In'; btn.disabled = false;
         }
       });
@@ -389,13 +389,10 @@
         if (p1.length < 6) { showError('signup-error','Password must be at least 6 characters.'); return; }
         btn.textContent = 'Creating...'; btn.disabled = true;
         try {
-          const user = await signUpWithEmail(eAddr, p1);
-          const fullName = f + (l ? ' ' + l : '');
-          const profileData = { name: fullName, phone: ph, country: c, email: eAddr, createdAt: new Date().toISOString() };
-          await setDoc(doc(db, 'users', user.uid), profileData, { merge:true });
+          await signUpWithEmail(f, l, eAddr, p1, ph, c);
           window.location.href = 'index.html';
         } catch(err) {
-          showError('signup-error', getAuthErrorMessage(err));
+          showError('signup-error', getAuthErrorMessage(err.code));
           btn.textContent = 'Create Account'; btn.disabled = false;
         }
       });
@@ -404,13 +401,13 @@
         try {
           await signInWithGoogle();
           window.location.href = 'index.html';
-        } catch(err) { showError('signin-error', getAuthErrorMessage(err)); }
+        } catch(err) { showError('signin-error', getAuthErrorMessage(err.code)); }
       });
       document.getElementById('google-signup-btn').addEventListener('click', async () => {
         try {
           await signInWithGoogle();
           window.location.href = 'index.html';
-        } catch(err) { showError('signup-error', getAuthErrorMessage(err)); }
+        } catch(err) { showError('signup-error', getAuthErrorMessage(err.code)); }
       });
 
       document.getElementById('forgot-btn').addEventListener('click', async () => {
@@ -419,7 +416,7 @@
         try {
           await resetPassword(em);
           showSuccess('forgot-success','Reset link sent! Check your inbox.');
-        } catch(err) { showError('signin-error', getAuthErrorMessage(err)); }
+        } catch(err) { showError('signin-error', getAuthErrorMessage(err.code)); }
       });
 
       document.getElementById('signout-btn').addEventListener('click', async () => {
