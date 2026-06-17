@@ -17,7 +17,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import {
   doc, getDoc, setDoc, collection, getDocs,
-  addDoc, deleteDoc, updateDoc, serverTimestamp
+  addDoc, deleteDoc, updateDoc, deleteField, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 /* ─── Page identity ───────────────────────────────────────────── */
@@ -806,9 +806,9 @@ async function migrateProducts(snap) {
       updates.category = TYPE_TO_CAT[legacyType] || 'accessories';
     }
 
-    /* Remove stale 'type' field */
+    /* Remove stale 'type' field using deleteField() — setting null keeps the field */
     if (p.type !== undefined) {
-      updates.type = null; // Firestore deleteField equivalent via merge null
+      updates.type = deleteField();
     }
 
     /* Add avgStars / reviewCount if missing */

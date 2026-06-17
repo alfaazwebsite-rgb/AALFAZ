@@ -61,12 +61,20 @@ async function loadProduct() {
     }
 
     /* ── Price for current region ─────────────────────────── */
-    const regionCode = localStorage.getItem('alfaaz_region') || 'IN';
-    const priceNum   = (product.prices && (product.prices[regionCode] || product.prices['IN'])) || 0;
-    const sym        = SYMBOLS[regionCode] || '₹';
-    const priceStr   = sym + priceNum.toLocaleString('en-IN');
+    const regionCode = (window.AalfazRegion && window.AalfazRegion.country)
+      || sessionStorage.getItem('aalfaz_currency_key') || 'IN';
+    const prices     = product.prices || {};
+    const priceNum   = (prices[regionCode] != null ? prices[regionCode] : (prices['IN'] || 0));
+    const sym        = (window.AalfazRegion && window.AalfazRegion.symbol) || SYMBOLS[regionCode] || '₹';
+    const priceStr   = regionCode === 'IN'
+      ? sym + Math.round(priceNum).toLocaleString('en-IN')
+      : sym + Number(priceNum).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
     product.priceNum = priceNum;
     product.price    = priceStr;
+
+    /* Store product prices on the price element so region changes can re-render */
+    if (priceEl) priceEl.dataset.productPrices = JSON.stringify(prices);
+    if (priceEl) priceEl.dataset.priceInr = prices['IN'] || 0;
 
     /* ── Populate page ────────────────────────────────────── */
     document.title = (product.name || 'Product') + ' — Aalfaz';
@@ -207,8 +215,8 @@ async function loadRelated(currentId, category) {
       return;
     }
 
-    const regionCode = localStorage.getItem('alfaaz_region') || 'IN';
-    const sym        = SYMBOLS[regionCode] || '₹';
+    const regionCode = (window.AalfazRegion && window.AalfazRegion.country) || sessionStorage.getItem('aalfaz_currency_key') || 'IN';
+    const sym        = (window.AalfazRegion && window.AalfazRegion.symbol) || SYMBOLS[regionCode] || '₹';
 
     grid.innerHTML = products.map(p => buildRelatedCard(p, regionCode, sym)).join('');
 
@@ -281,5 +289,22 @@ function wireAccordion() {
 function capitalize(s) {
   return s ? s.charAt(0).toUpperCase() + s.slice(1) : '';
 }
+
+/* ── Re-render price when user switches region via footer ─── */
+window.addEventListener('aalfaz:regionChange', function(e) {
+  const priceEl = document.getElementById('pdp-price');
+  if (!priceEl) return;
+  try {
+    const prices  = JSON.parse(priceEl.dataset.productPrices || '{}');
+    const region  = e.detail || window.AalfazRegion || { country:'IN', symbol:'₹' };
+    const cc      = region.country || 'IN';
+    const sym     = region.symbol  || '₹';
+    const num     = prices[cc] != null ? prices[cc] : (prices['IN'] || 0);
+    const str     = cc === 'IN'
+      ? sym + Math.round(num).toLocaleString('en-IN')
+      : sym + Number(num).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
+    priceEl.textContent = str;
+  } catch(_) {}
+});
 
 boot();

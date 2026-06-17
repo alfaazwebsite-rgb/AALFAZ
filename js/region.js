@@ -40,20 +40,46 @@
   }
   updateGlobal();
 
-  // ── Format a price number (INR base) → display string ────────────
-  function formatPrice(inrAmount) {
-    const c = activeCurrency;
-    const converted = inrAmount * c.rate;
-    if (c.code === 'INR') {
-      return c.symbol + Math.round(inrAmount).toLocaleString('en-IN');
+  /**
+   * formatPrice(inrAmountOrProduct, pricesObj?)
+   *
+   * Two call signatures:
+   *   formatPrice(3000)              — convert INR amount using exchange rate
+   *   formatPrice(3000, {IN:3000, US:36, GB:28, ...})  — use exact country price if set,
+   *                                     else fall back to INR conversion
+   */
+  function formatPrice(inrAmount, pricesObj) {
+    const c   = activeCurrency;
+    const key = activeCountryKey;
+    const sym = c.symbol;
+
+    // If a per-country prices map is provided, use the exact price when available
+    if (pricesObj && typeof pricesObj === 'object') {
+      if (pricesObj[key] != null) {
+        const exact = pricesObj[key];
+        return key === 'IN'
+          ? sym + Math.round(exact).toLocaleString('en-IN')
+          : sym + Number(exact).toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
+      }
+      // No exact price for this country — use INR base with exchange rate
+      const inrBase = pricesObj['IN'] || inrAmount || 0;
+      const converted = inrBase * c.rate;
+      return sym + converted.toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
     }
-    return c.symbol + converted.toFixed(2);
+
+    // Simple INR amount → convert
+    const converted = inrAmount * c.rate;
+    if (key === 'IN') {
+      return sym + Math.round(inrAmount).toLocaleString('en-IN');
+    }
+    return sym + converted.toLocaleString('en-US', { minimumFractionDigits:0, maximumFractionDigits:0 });
   }
 
   // ── Set currency by country code ─────────────────────────────────
   function setCurrencyByCountry(countryCode) {
     let key = countryCode;
-    if (EU_COUNTRIES.has(countryCode)) key = 'EU';
+    if (key === 'UK') key = 'GB'; // footer selector uses UK, map to GB
+    if (EU_COUNTRIES.has(key)) key = 'EU';
     if (!CURRENCIES[key]) key = 'IN';
     activeCountryKey = key;
     activeCurrency   = CURRENCIES[key];
@@ -65,9 +91,15 @@
 
   // ── Update all price elements on the page ────────────────────────
   function applyToPage() {
+    // data-price-inr: simple INR base price, convert with exchange rate
     document.querySelectorAll('[data-price-inr]').forEach(el => {
       const inr = parseFloat(el.dataset.priceInr);
-      if (!isNaN(inr)) el.textContent = formatPrice(inr);
+      if (!isNaN(inr)) {
+        // Also check if element has a per-country prices map
+        let prices = null;
+        try { prices = el.dataset.prices ? JSON.parse(el.dataset.prices) : null; } catch(_) {}
+        el.textContent = formatPrice(inr, prices);
+      }
     });
   }
 
@@ -75,12 +107,11 @@
   function syncFooterSelector() {
     const sel = document.getElementById('country-selector');
     if (!sel) return;
-    // Find matching option by currency code
+    // Options use country keys (IN, US, UK, EU, CA)
+    // activeCountryKey uses GB for UK, so handle alias
+    const target = activeCountryKey === 'GB' ? ['GB','UK'] : [activeCountryKey];
     for (const opt of sel.options) {
-      if (opt.value === activeCurrency.code || opt.value === Object.keys(CURRENCIES).find(k => CURRENCIES[k].code === activeCurrency.code)) {
-        sel.value = opt.value;
-        break;
-      }
+      if (target.includes(opt.value)) { sel.value = opt.value; break; }
     }
   }
 
@@ -99,10 +130,13 @@
     // 1. Check sessionStorage first (avoid re-fetching on navigation)
     const cached = sessionStorage.getItem('aalfaz_currency_key');
     if (cached && CURRENCIES[cached]) {
-      activeCurrency = CURRENCIES[cached];
+      activeCountryKey = cached;          // ← was missing, caused wrong price lookup
+      activeCurrency   = CURRENCIES[cached];
+      updateGlobal();
       applyToPage();
       bindFooterSelector();
       syncFooterSelector();
+      window.dispatchEvent(new CustomEvent('aalfaz:regionChange', { detail: window.AalfazRegion }));
       return;
     }
 

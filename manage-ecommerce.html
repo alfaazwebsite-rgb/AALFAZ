@@ -209,7 +209,7 @@
       .ec-header { padding:1rem; }
     }
   </style>
-  <meta name="color-scheme" content="light" />
+  <meta name="color-scheme" content="dark" />
   </head>
 <body>
 
@@ -572,6 +572,9 @@ function setPartnerStatus(partnerId, status, partnerDef, existingData = {}) {
   const body      = document.getElementById(`cred-body-${partnerId}`);
   const fieldsDiv = document.getElementById(`cred-fields-${partnerId}`);
 
+  // Always record the current status so collectCredentials() never loses it
+  card.dataset.currentStatus = status;
+
   if (status === 'inactive') {
     body.classList.remove('open');
     fieldsDiv.innerHTML = '';
@@ -606,8 +609,7 @@ function setPartnerStatus(partnerId, status, partnerDef, existingData = {}) {
     ${hint ? `<div class="cred-hint">${hint}</div>` : ''}
   `;
 
-  // Store current status on the card for collect
-  card.dataset.currentStatus = status;
+  // (currentStatus already set at the top of this function)
 }
 
 function collectCredentials() {
@@ -637,6 +639,6 @@ function toast(msg, color='#111') {
   setTimeout(()=>t.remove(), 3000);
 }
 </script>
-    <script type="module" src="js/search.js"></script>
+    <!-- search.js intentionally excluded from admin panel -->
   </body>
 </html>
