@@ -327,6 +327,27 @@
         flex-shrink: unset;
         scroll-snap-align: unset;
       }
+      /* Shop from category CTA */
+      .pdp-related__shop-from {
+        text-align: center;
+        margin-top: 3rem;
+        padding-bottom: 1rem;
+      }
+      .pdp-related__shop-btn {
+        display: inline-block;
+        background: #111;
+        color: #fff;
+        padding: .9rem 2.8rem;
+        border-radius: 9999px;
+        font-family: 'Inter', sans-serif;
+        font-size: .72rem;
+        font-weight: 700;
+        letter-spacing: .14em;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background .22s;
+      }
+      .pdp-related__shop-btn:hover { background: #333; color: #fff; }
     </style>
   </head>
   <body>
@@ -418,7 +439,7 @@
             <p class="pdp-info__subtitle" id="pdp-subtitle"></p>
 
             <div class="pdp-info__stars">
-              <span>★★★★★</span>
+              <span id="pdp-stars">★★★★★</span>
               <span class="pdp-info__reviews" id="pdp-reviews">(0)</span>
             </div>
 
@@ -479,6 +500,11 @@
       <section class="pdp-related" id="pdp-related">
         <h2 class="pdp-related__heading">You may also like</h2>
         <div class="pdp-related__grid" id="pdp-related-grid"></div>
+        <div class="pdp-related__shop-from" id="pdp-shop-category-wrap" style="display:none">
+          <a id="pdp-shop-category-btn" href="shop.html" class="pdp-related__shop-btn">
+            Shop All <span id="pdp-shop-category-label"></span>
+          </a>
+        </div>
       </section>
 
       <!-- Footer -->

@@ -74,13 +74,18 @@
     var img1     = (p.images || [])[1] || img0;
     var badge    = p.badge ? '<span class="product-card__badge">' + p.badge + '</span>' : '';
     var reviews  = p.reviews || [];
-    var rc       = p.reviewCount || reviews.length || 0;
-    var avgStars = reviews.length
-      ? Math.round(reviews.reduce(function(s,r){ return s+(r.stars||5); }, 0) / reviews.length)
-      : 5;
+    var rc       = p.reviewCount != null ? p.reviewCount : reviews.length || 0;
+    var avgStars = p.avgStars    != null
+      ? Math.min(5, Math.max(1, Math.round(p.avgStars)))
+      : (reviews.length
+          ? Math.round(reviews.reduce(function(s,r){ return s+(r.stars||5); }, 0) / reviews.length)
+          : 5);
     var stars    = '★'.repeat(avgStars) + '☆'.repeat(5 - avgStars);
     var priceStr = formatPrice(p);
-    var type     = p.type || (p.category || '').replace(/s$/,'');
+    /* Always show the category name — never the old 'type' field */
+    var cat  = (p.category || 'jewelry');
+    var type = cat.charAt(0).toUpperCase() + cat.slice(1);
+
 
     return (
       '<a href="' + href + '" class="product-card group">' +

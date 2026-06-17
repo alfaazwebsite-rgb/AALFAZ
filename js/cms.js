@@ -46,13 +46,14 @@ const PDP_SKIP_IDS = new Set([
 ]);
 
 const DEFAULT_PRODUCTS = [
-  { name:'Solitaire Ring',  category:'rings',     featured:true,  subtitle:'Crafted in 18K gold',       badge:'new',            description:'A timeless solitaire ring crafted in 18K gold.',           images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842384/file_00000000e4b4722f8e2c578c5734a676_jadeog.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842386/file_0000000091d4722f99050295d4df3d55_rfvxmr.png'], prices:{IN:45000,US:540,GB:430,AE:1980,SA:2025,AU:825,CA:735,EU:500,SG:730},   stock:{status:'in_stock',qty:50}, reviews:[] },
-  { name:'The Bangle Set',  category:'bracelets', featured:true,  subtitle:'Set of three',              badge:'new',            description:'Three hand-crafted bangles in 22K gold.',                  images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842386/file_000000005dc8722f80fdcd06c66d08a0_qmpmmj.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842389/file_00000000e0f8722f8134cab7a06e7b14_dokbto.png'],  prices:{IN:125000,US:1500,GB:1200,AE:5500,SA:5625,AU:2300,CA:2050,EU:1400,SG:2025}, stock:{status:'in_stock',qty:30}, reviews:[] },
-  { name:'Pearl Pendant',   category:'pendants',  featured:true,  subtitle:'Limited edition piece',     badge:'limited edition',description:'A rare freshwater pearl pendant on an 18K gold chain.',    images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842383/file_000000008d20722f930db39bd306a08c_djuj0y.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842383/file_000000001534722f8c47bcee05a10c49_qyvafp.png'],  prices:{IN:32000,US:385,GB:305,AE:1410,SA:1440,AU:590,CA:525,EU:355,SG:520},   stock:{status:'in_stock',qty:15}, reviews:[] },
-  { name:'Cuban Chain',     category:'pendants',  featured:true,  subtitle:'22K gold finish',           badge:'new',            description:'A bold Cuban link chain in 22K gold.',                    images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842387/file_00000000bf88722fab83a9a5152dbd3b_osqjva.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842381/file_000000003d14722fabc2369201f40f39_pc4riq.png'],  prices:{IN:58000,US:695,GB:555,AE:2550,SA:2610,AU:1065,CA:950,EU:645,SG:940},  stock:{status:'in_stock',qty:20}, reviews:[] },
-  { name:'Drop Earrings',   category:'earrings',  featured:true,  subtitle:'Diamond studded',           badge:'new',            description:'Exquisite diamond-studded drop earrings in 18K gold.',    images:['https://images.unsplash.com/photo-1588444837495-c6cfeb53f32d?auto=format&fit=crop&w=800&q=80','https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=80'], prices:{IN:28000,US:335,GB:270,AE:1230,SA:1260,AU:515,CA:460,EU:310,SG:455}, stock:{status:'in_stock',qty:40}, reviews:[] },
-  { name:'Tennis Bracelet', category:'bracelets', featured:true,  subtitle:'Lab-grown diamonds',        badge:'limited edition',description:'A tennis bracelet with lab-grown diamonds in 18K white gold.', images:['https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=800&q=80','https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=800&q=80'], prices:{IN:75000,US:900,GB:720,AE:3310,SA:3375,AU:1375,CA:1225,EU:840,SG:1215}, stock:{status:'in_stock',qty:10}, reviews:[] },
+  { name:'Solitaire Ring',  category:'rings',     featured:true,  subtitle:'Crafted in 18K gold',       badge:'new',            description:'A timeless solitaire ring crafted in 18K gold.',                     images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842384/file_00000000e4b4722f8e2c578c5734a676_jadeog.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842386/file_0000000091d4722f99050295d4df3d55_rfvxmr.png'], prices:{IN:45000,US:540,GB:430,AE:1980,SA:2025,AU:825,CA:735,EU:500,SG:730},   stock:{status:'in_stock',qty:50}, avgStars:5, reviewCount:41 },
+  { name:'The Bangle Set',  category:'bracelets', featured:true,  subtitle:'Set of three',              badge:'new',            description:'Three hand-crafted bangles in 22K gold.',                            images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842386/file_000000005dc8722f80fdcd06c66d08a0_qmpmmj.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842389/file_00000000e0f8722f8134cab7a06e7b14_dokbto.png'],  prices:{IN:125000,US:1500,GB:1200,AE:5500,SA:5625,AU:2300,CA:2050,EU:1400,SG:2025}, stock:{status:'in_stock',qty:30}, avgStars:5, reviewCount:41 },
+  { name:'Pearl Pendant',   category:'pendants',  featured:true,  subtitle:'Limited edition piece',     badge:'limited edition',description:'A rare freshwater pearl pendant on an 18K gold chain.',             images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842383/file_000000008d20722f930db39bd306a08c_djuj0y.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842383/file_000000001534722f8c47bcee05a10c49_qyvafp.png'],  prices:{IN:32000,US:385,GB:305,AE:1410,SA:1440,AU:590,CA:525,EU:355,SG:520},   stock:{status:'in_stock',qty:15}, avgStars:5, reviewCount:277 },
+  { name:'Cuban Chain',     category:'pendants',  featured:true,  subtitle:'22K gold finish',           badge:'new',            description:'A bold Cuban link chain in 22K gold — a statement piece.',           images:['https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842387/file_00000000bf88722fab83a9a5152dbd3b_osqjva.png','https://res.cloudinary.com/dwchxvpln/image/upload/q_auto/f_auto/v1778842381/file_000000003d14722fabc2369201f40f39_pc4riq.png'],  prices:{IN:58000,US:695,GB:555,AE:2550,SA:2610,AU:1065,CA:950,EU:645,SG:940},  stock:{status:'in_stock',qty:20}, avgStars:5, reviewCount:89 },
+  { name:'Drop Earrings',   category:'earrings',  featured:true,  subtitle:'Diamond studded',           badge:'new',            description:'Exquisite diamond-studded drop earrings in 18K gold.',               images:['https://images.unsplash.com/photo-1588444837495-c6cfeb53f32d?auto=format&fit=crop&w=800&q=80','https://images.unsplash.com/photo-1630019852942-f89202989a59?auto=format&fit=crop&w=800&q=80'], prices:{IN:28000,US:335,GB:270,AE:1230,SA:1260,AU:515,CA:460,EU:310,SG:455}, stock:{status:'in_stock',qty:40}, avgStars:5, reviewCount:204 },
+  { name:'Tennis Bracelet', category:'bracelets', featured:true,  subtitle:'Lab-grown diamonds',        badge:'limited edition',description:'A tennis bracelet with lab-grown diamonds in 18K white gold.',      images:['https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=800&q=80','https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=800&q=80'], prices:{IN:75000,US:900,GB:720,AE:3310,SA:3375,AU:1375,CA:1225,EU:840,SG:1215}, stock:{status:'in_stock',qty:10}, avgStars:5, reviewCount:1042 },
 ];
+
 
 /* ─── State ─────────────────────────────────────────────── */
 let cmsData  = {};
@@ -675,9 +676,17 @@ function openProductModal(id, data = {}) {
             </div>
           `).join('')}
         </div>
-        <div class="cms-form-section-title">Reviews</div>
-        <div id="prd-reviews-list"></div>
-        <button type="button" class="cms-panel__add-btn" id="add-review-btn" style="margin-top:.5rem">+ Add Review</button>
+        <div class="cms-form-section-title">Reviews &amp; Rating</div>
+        <div class="cms-form-row">
+          <div class="cms-form-field">
+            <label>Average Stars (1–5)</label>
+            <input type="number" id="prd-avg-stars" value="${data.avgStars ?? 5}" min="1" max="5" step="0.1" />
+          </div>
+          <div class="cms-form-field">
+            <label>Total Review Count</label>
+            <input type="number" id="prd-review-count" value="${data.reviewCount ?? 0}" min="0" />
+          </div>
+        </div>
       </div>
       <div class="cms-modal__footer">
         <button class="cms-btn cms-btn--ghost" id="cms-modal-cancel">Cancel</button>
@@ -687,10 +696,8 @@ function openProductModal(id, data = {}) {
   `;
   document.body.appendChild(modal);
 
-  (data.reviews || []).forEach((r, i) => appendReviewRow(i, r));
   modal.querySelector('#cms-modal-close').onclick  = () => modal.remove();
   modal.querySelector('#cms-modal-cancel').onclick = () => modal.remove();
-  modal.querySelector('#add-review-btn').onclick   = () => appendReviewRow(Date.now());
 
   modal.querySelector('#cms-modal-save').onclick = async () => {
     const btn  = modal.querySelector('#cms-modal-save');
@@ -716,7 +723,8 @@ function openProductModal(id, data = {}) {
           return [c.key, isNaN(v) ? null : v];
         }).filter(([, v]) => v !== null)
       ),
-      reviews:   collectReviews(),
+      avgStars:    parseFloat(document.getElementById('prd-avg-stars')?.value)   || 5,
+      reviewCount: parseInt(document.getElementById('prd-review-count')?.value) || 0,
       updatedAt: serverTimestamp(),
     };
 
@@ -741,34 +749,6 @@ async function openProductModalById(productId) {
   } catch (e) { showNotification('✗ ' + e.message, 'error'); }
 }
 
-/* ─── Reviews ─────────────────────────────────────────────────── */
-function appendReviewRow(id, data = {}) {
-  const list = document.getElementById('prd-reviews-list');
-  if (!list) return;
-  const row = document.createElement('div');
-  row.className = 'cms-review-row';
-  row.innerHTML = `
-    <div class="cms-form-row" style="align-items:flex-end;gap:.5rem">
-      <div class="cms-form-field" style="flex:2"><label>Name</label><input type="text" class="rv-name" value="${esc(data.name)}" placeholder="Ananya S." /></div>
-      <div class="cms-form-field" style="flex:1"><label>Stars</label><input type="number" class="rv-stars" value="${data.stars||5}" min="1" max="5" /></div>
-      <div class="cms-form-field" style="flex:1"><label>Verified</label><select class="rv-verified"><option value="true" ${data.verified!==false?'selected':''}>Yes</option><option value="false" ${data.verified===false?'selected':''}>No</option></select></div>
-      <button type="button" class="cms-review-row__delete">✕</button>
-    </div>
-    <div class="cms-form-field"><label>Review Text</label><textarea class="rv-text" rows="2">${esc(data.text)}</textarea></div>
-  `;
-  row.querySelector('.cms-review-row__delete').onclick = () => row.remove();
-  list.appendChild(row);
-}
-
-function collectReviews() {
-  return Array.from(document.querySelectorAll('.cms-review-row')).map(row => ({
-    name:     row.querySelector('.rv-name').value.trim(),
-    stars:    parseInt(row.querySelector('.rv-stars').value) || 5,
-    verified: row.querySelector('.rv-verified').value === 'true',
-    text:     row.querySelector('.rv-text').value.trim(),
-    date:     new Date().toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' }),
-  })).filter(r => r.name);
-}
 
 async function deleteProduct(id, name) {
   if (!confirm(`Delete "${name}"?\nThis cannot be undone.`)) return;
@@ -783,7 +763,11 @@ async function deleteProduct(id, name) {
 async function seedProductsIfEmpty() {
   try {
     const snap = await getDocs(collection(db, 'products'));
-    if (!snap.empty) return;
+    if (!snap.empty) {
+      // Products exist — run a silent migration to fix stale fields
+      await migrateProducts(snap);
+      return;
+    }
     showNotification('First login — seeding 6 default products…', 'info');
     for (const p of DEFAULT_PRODUCTS) {
       await addDoc(collection(db, 'products'), { ...p, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
@@ -791,6 +775,61 @@ async function seedProductsIfEmpty() {
     showNotification('✓ 6 default products added!', 'success');
   } catch (e) { console.warn('[CMS] Seed failed:', e.message); }
 }
+
+/**
+ * migrateProducts — silently patches any existing Firestore product docs
+ * that still carry the old `type` field (e.g. "chain", "earring") or are
+ * missing the new `avgStars` / `reviewCount` fields.
+ * Safe to run on every admin login — skips docs that are already correct.
+ */
+async function migrateProducts(snap) {
+  /* Map legacy type → correct category */
+  const TYPE_TO_CAT = {
+    ring: 'rings', rings: 'rings',
+    pendant: 'pendants', pendants: 'pendants',
+    chain: 'pendants', necklace: 'pendants', necklaces: 'pendants',
+    earring: 'earrings', earrings: 'earrings',
+    bracelet: 'bracelets', bracelets: 'bracelets', bangle: 'bracelets', bangles: 'bracelets',
+    anklet: 'anklets', anklets: 'anklets',
+    accessory: 'accessories', accessories: 'accessories',
+  };
+  const VALID_CATS = new Set(['rings','pendants','earrings','bracelets','anklets','accessories']);
+
+  for (const d of snap.docs) {
+    const p       = d.data();
+    const updates = {};
+
+    /* Fix category if stale / missing */
+    const rawCat = (p.category || '').toLowerCase();
+    if (!VALID_CATS.has(rawCat)) {
+      const legacyType = (p.type || rawCat || '').toLowerCase();
+      updates.category = TYPE_TO_CAT[legacyType] || 'accessories';
+    }
+
+    /* Remove stale 'type' field */
+    if (p.type !== undefined) {
+      updates.type = null; // Firestore deleteField equivalent via merge null
+    }
+
+    /* Add avgStars / reviewCount if missing */
+    if (p.avgStars == null) {
+      const arr = Array.isArray(p.reviews) ? p.reviews : [];
+      updates.avgStars = arr.length
+        ? Math.round(arr.reduce((s, r) => s + (r.stars || 5), 0) / arr.length)
+        : 5;
+    }
+    if (p.reviewCount == null) {
+      updates.reviewCount = Array.isArray(p.reviews) ? p.reviews.length : 0;
+    }
+
+    if (Object.keys(updates).length) {
+      try {
+        await updateDoc(doc(db, 'products', d.id), updates);
+      } catch (_) { /* non-fatal */ }
+    }
+  }
+}
+
 
 /* ─── Login Modal ─────────────────────────────────────────────── */
 function showLoginModal() {
