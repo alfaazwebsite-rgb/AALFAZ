@@ -8,9 +8,11 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
+  color-scheme: light only;
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   --font-logo: 'Cormorant Garamond', 'Georgia', serif;
   --font-display: 'Archivo Black', ui-sans-serif, system-ui, sans-serif;
@@ -48,6 +50,7 @@ body {
   pointer-events: none;
   transform: translateY(0);
   background: transparent;
+  user-select: none;          /* prevent accidental selection */
   transition:
     transform 0.45s var(--ease-smooth),
     background 0.35s var(--ease-smooth);
