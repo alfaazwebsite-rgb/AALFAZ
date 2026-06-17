@@ -63,7 +63,12 @@ mobilePanel.innerHTML = `
 
 const mobileTrigger = document.getElementById('alf-mobile-search-btn');
 if (mobileTrigger && mobileTrigger.parentNode) {
-  mobileTrigger.parentNode.insertBefore(mobilePanel, mobileTrigger.nextSibling);
+  // Wrap the Search button + panel in a single container so nav gap stays even
+  const wrapper = document.createElement('div');
+  wrapper.className = 'mobile-search-wrapper';
+  mobileTrigger.parentNode.insertBefore(wrapper, mobileTrigger);
+  wrapper.appendChild(mobileTrigger);
+  wrapper.appendChild(mobilePanel);
 }
 
 /* ─────────────────────────────────────────────────────────────

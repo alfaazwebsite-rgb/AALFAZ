@@ -2675,6 +2675,18 @@ body.menu-open {
   max-height: 520px;
 }
 
+/* Wrapper keeps Search button + panel as ONE flex item — gap stays even */
+.mobile-search-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.mobile-search-wrapper .alf-mobile-search-panel {
+  width: 90%;
+}
+
 .alf-mobile-search-inner {
   display: flex;
   align-items: center;
