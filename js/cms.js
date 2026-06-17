@@ -54,12 +54,21 @@ const DEFAULT_PRODUCTS = [
   { name:'Tennis Bracelet', category:'bracelets', featured:true,  subtitle:'Lab-grown diamonds',        badge:'limited edition',description:'A tennis bracelet with lab-grown diamonds in 18K white gold.', images:['https://images.unsplash.com/photo-1611652022419-a9419f74343d?auto=format&fit=crop&w=800&q=80','https://images.unsplash.com/photo-1573408301185-9146fe634ad0?auto=format&fit=crop&w=800&q=80'], prices:{IN:75000,US:900,GB:720,AE:3310,SA:3375,AU:1375,CA:1225,EU:840,SG:1215}, stock:{status:'in_stock',qty:10}, reviews:[] },
 ];
 
-/* ─── State ───────────────────────────────────────────────────── */
+/* ─── State ─────────────────────────────────────────────── */
 let cmsData  = {};
 let isAdmin  = false;
 let auth, db;
 let _ckSeq   = 0;
 let _activeTab = 'all';
+
+/*
+ * DIRTY TRACKING — only what the admin ACTUALLY changed gets saved.
+ * This is the core safety net that prevents any CMS save from ever
+ * wiping unrelated Firestore data.
+ */
+let _dirtyPageData   = {};   // { ck: value } — text/img edits
+let _dirtySocial     = {};   // { key: href } — footer social links
+let _dirtyInfluencer = [];   // [{ idx, type, url }] — influencer cards
 
 /* ─── Elements to skip when assigning CMS keys ────────────────── */
 const SKIP_ANCESTOR = [
@@ -231,17 +240,20 @@ async function disableAdminMode() {
   document.body.classList.remove('cms-admin');
 
   // Clean up editable state
-  document.querySelectorAll('[data-ck]:not(img)').forEach(el => {
+  document.querySelectorAll('[data-ck]').forEach(el => {
     el.contentEditable = 'false';
     el.style.outline = '';
     el.title = '';
+    if (el._cmsDblHandler) {
+        el.removeEventListener('dblclick', el._cmsDblHandler);
+        delete el._cmsDblHandler;
+    }
+    if (el.tagName === 'IMG') {
+        el.onclick = null;
+        el.style.cursor = '';
+    }
   });
-  document.querySelectorAll('img[data-ck]').forEach(el => {
-    el.style.outline = '';
-    el.style.cursor  = '';
-    el.title = '';
-    el.onclick = null;
-  });
+  
   document.querySelectorAll('[data-cms-social]').forEach(el => {
     el.style.outline = '';
     el.onclick = null;
@@ -258,25 +270,57 @@ async function disableAdminMode() {
 
 /* ─── Make text/image editable ───────────────────────────────── */
 function makeEditable() {
-  // Text elements: contentEditable
-  document.querySelectorAll('[data-ck]:not(img)').forEach(el => {
+  document.querySelectorAll('[data-ck]').forEach(el => {
+    if (el.tagName === 'IMG') {
+      /* ─ Images: click to swap URL ──────────────────────── */
+      el.style.outline = '2px dashed rgba(201,168,76,0.7)';
+      el.style.cursor  = 'pointer';
+      el.title = '📷 Click to change image';
+      el.onclick = e => {
+        if (!isAdmin) return;
+        e.preventDefault(); e.stopPropagation();
+        const url = prompt('🖼️ New image URL:', el.src);
+        if (url && url.trim() && url.trim() !== el.src) {
+          el.src = url.trim();
+          _dirtyPageData[el.dataset.ck] = url.trim(); // mark dirty
+        }
+      };
+      return;
+    }
+
+    if (el.tagName === 'A') {
+      /*
+       * LINKS (<a>): DO NOT set contentEditable — that kills navigation.
+       * Single-click navigates normally. Double-click opens a prompt to
+       * edit the link text. This keeps CTA buttons and nav fully functional.
+       */
+      el.style.outline = '1px dashed rgba(201,168,76,0.35)';
+      el.title = '✏️ Double-click to edit link text';
+      // Use a named fn so we can cleanly remove it on exit
+      const dblHandler = e => {
+        if (!isAdmin) return;
+        e.preventDefault(); e.stopPropagation();
+        const cur     = el.textContent.trim();
+        const newText = prompt('Edit link text:', cur);
+        if (newText !== null && newText.trim() !== cur) {
+          el.textContent = newText.trim();
+          _dirtyPageData[el.dataset.ck] = newText.trim();
+        }
+      };
+      el.addEventListener('dblclick', dblHandler);
+      el._cmsDblHandler = dblHandler; // store ref for cleanup
+      return;
+    }
+
+    /* ─ Regular text elements ─────────────────────────── */
     el.contentEditable = 'true';
     el.style.outline   = '1px dashed rgba(201,168,76,0.5)';
     el.style.minHeight = '1em';
     el.title = '✏️ Click to edit';
-  });
-
-  // Images: click to swap URL
-  document.querySelectorAll('img[data-ck]').forEach(el => {
-    el.style.outline = '2px dashed rgba(201,168,76,0.7)';
-    el.style.cursor  = 'pointer';
-    el.title = '📷 Click to change image';
-    el.onclick = e => {
-      if (!isAdmin) return;
-      e.preventDefault(); e.stopPropagation();
-      const url = prompt('🖼 New image URL:', el.src);
-      if (url && url.trim()) el.src = url.trim();
-    };
+    el.addEventListener('input', () => {
+      // Record change immediately so saveAll knows what was actually edited
+      _dirtyPageData[el.dataset.ck] = el.innerHTML.trim();
+    });
   });
 }
 
@@ -298,10 +342,11 @@ function makeSocialEditable() {
       const val = prompt(`Set ${labels[key] || key}:`, cur);
       if (val === null) return;
       const t = val.trim();
-      if (key === 'call')      el.href = t.startsWith('tel:')     ? t : 'tel:' + t;
+      if (key === 'call')          el.href = t.startsWith('tel:')     ? t : 'tel:' + t;
       else if (key === 'whatsapp') el.href = t.startsWith('https://') ? t : 'https://wa.me/' + t.replace(/\D/g,'');
-      else if (key === 'email') el.href = t.startsWith('mailto:') ? t : 'mailto:' + t;
-      else el.href = t;
+      else if (key === 'email')    el.href = t.startsWith('mailto:')  ? t : 'mailto:' + t;
+      else                         el.href = t;
+      _dirtySocial[key] = el.href; // mark dirty
     };
   });
 }
@@ -309,7 +354,6 @@ function makeSocialEditable() {
 /* ─── Influencer section editing ──────────────────────────────── */
 function makeInfluencerEditable() {
   document.querySelectorAll('.influencer__card').forEach(card => {
-    // Remove any existing overlay
     card.querySelector('.cms-inf-overlay')?.remove();
 
     const hasVideo = !!card.querySelector('video');
@@ -317,14 +361,14 @@ function makeInfluencerEditable() {
     overlay.className = 'cms-inf-overlay';
     overlay.innerHTML = `<span>${hasVideo ? '📹 Change Video' : '📷 Change Image'}</span>`;
 
-    // Card must be relative-positioned for overlay to work
     const curPos = getComputedStyle(card).position;
     if (curPos === 'static') card.style.position = 'relative';
-
     card.appendChild(overlay);
 
     overlay.addEventListener('click', e => {
       e.preventDefault(); e.stopPropagation();
+      const cardIdx = parseInt(card.dataset.cmsInfluencerIdx ?? -1);
+
       if (hasVideo) {
         const video  = card.querySelector('video');
         const source = card.querySelector('source');
@@ -338,8 +382,11 @@ function makeInfluencerEditable() {
             video.appendChild(s);
           }
           video.load(); video.play().catch(() => {});
-          card.dataset.cmsInfUrl  = url.trim();
-          card.dataset.cmsInfType = 'video';
+          // Mark dirty
+          if (cardIdx >= 0) {
+            _dirtyInfluencer = _dirtyInfluencer.filter(c => c.idx !== cardIdx);
+            _dirtyInfluencer.push({ idx: cardIdx, type: 'video', url: url.trim() });
+          }
         }
       } else {
         const img = card.querySelector('img');
@@ -347,8 +394,11 @@ function makeInfluencerEditable() {
         const url = prompt('📷 Image URL:', cur);
         if (url && url.trim() && img) {
           img.src = url.trim();
-          card.dataset.cmsInfUrl  = url.trim();
-          card.dataset.cmsInfType = 'image';
+          // Mark dirty
+          if (cardIdx >= 0) {
+            _dirtyInfluencer = _dirtyInfluencer.filter(c => c.idx !== cardIdx);
+            _dirtyInfluencer.push({ idx: cardIdx, type: 'image', url: url.trim() });
+          }
         }
       }
     });
@@ -388,37 +438,59 @@ function injectAdminBar() {
   }
 }
 
-/* ─── Save all changes ────────────────────────────────────────── */
+/* ─── Save — ONLY dirty changes, always merge:true ───────────── */
 async function saveAll() {
   const btn = document.getElementById('cms-save-btn');
+
+  const hasPage       = Object.keys(_dirtyPageData).length > 0;
+  const hasSocial     = Object.keys(_dirtySocial).length > 0;
+  const hasInfluencer = _dirtyInfluencer.length > 0;
+
+  if (!hasPage && !hasSocial && !hasInfluencer) {
+    showNotification('Nothing to save — make an edit first.', 'info');
+    return;
+  }
+
   btn.textContent = 'Saving…'; btn.disabled = true;
   try {
-    // Page text + image edits
-    const pageData = {};
-    document.querySelectorAll('[data-ck]').forEach(el => {
-      // Skip product-detail dynamic fields even if they somehow got a ck
-      if (IS_PDP && el.id && PDP_SKIP_IDS.has(el.id)) return;
-      pageData[el.dataset.ck] = el.tagName === 'IMG' ? el.src : el.innerHTML.trim();
-    });
+    /* ── Page text + images ───────────────────────────────── */
+    if (hasPage || hasInfluencer) {
+      const pageUpdate = { ..._dirtyPageData };
 
-    // Social links
-    const social = {};
-    document.querySelectorAll('[data-cms-social]').forEach(el => {
-      social[el.dataset.cmsSocial] = el.href;
-    });
-
-    // Influencer card edits
-    const influencerCards = [];
-    document.querySelectorAll('.influencer__card[data-cms-inf-url]').forEach(card => {
-      const idx = parseInt(card.dataset.cmsInfluencerIdx ?? -1);
-      if (idx >= 0) {
-        influencerCards.push({ idx, type: card.dataset.cmsInfType, url: card.dataset.cmsInfUrl });
+      if (hasInfluencer) {
+        // Merge new edits on top of any previously saved influencer cards
+        const existing = Array.isArray(cmsData.influencerCards) ? cmsData.influencerCards : [];
+        const merged   = [...existing];
+        _dirtyInfluencer.forEach(({ idx, type, url }) => {
+          const i = merged.findIndex(c => c.idx === idx);
+          if (i >= 0) merged[i] = { idx, type, url };
+          else merged.push({ idx, type, url });
+        });
+        pageUpdate.influencerCards = merged;
       }
-    });
 
-    await setDoc(doc(db, 'siteContent', PAGE_SLUG), { ...pageData, ...(influencerCards.length ? { influencerCards } : {}) });
-    await setDoc(doc(db, 'siteContent', 'main'), { social }, { merge: true });
-    cmsData = { ...pageData };
+      /*
+       * merge: true — CRITICAL SAFETY NET.
+       * Without merge:true, setDoc REPLACES the entire Firestore document,
+       * wiping every key saved from previous sessions. With merge:true only
+       * the keys we provide are updated; everything else is left untouched.
+       * This is what prevents the "empty product pages" disaster from ever
+       * happening again.
+       */
+      await setDoc(doc(db, 'siteContent', PAGE_SLUG), pageUpdate, { merge: true });
+      Object.assign(cmsData, _dirtyPageData); // keep local cache in sync
+    }
+
+    /* ── Social links ─────────────────────────────────────── */
+    if (hasSocial) {
+      await setDoc(doc(db, 'siteContent', 'main'), { social: _dirtySocial }, { merge: true });
+    }
+
+    /* ── Reset dirty state after successful save ──────────── */
+    _dirtyPageData   = {};
+    _dirtySocial     = {};
+    _dirtyInfluencer = [];
+
     showNotification('✓ Changes saved — live for all visitors!', 'success');
   } catch (e) {
     showNotification('✗ Save failed: ' + e.message, 'error');
@@ -426,6 +498,8 @@ async function saveAll() {
     btn.textContent = 'Save Changes'; btn.disabled = false;
   }
 }
+
+
 
 /* ─── Products Panel ──────────────────────────────────────────── */
 async function openProductsPanel() {
