@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account — Aalfaz</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/auth.css" />
+    <style>
+      main {
+        padding-top: var(--nav-height, 80px);
+        min-height: 80vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .account-page-container {
+        width: 100%;
+        max-width: 500px;
+        padding: 2rem;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navbar (Exact copy from index.html lines 48-120 + required wrappers) -->
+    <header id="navbar" class="navbar navbar--shop">
+      <div class="nav-inner">
+        <!-- Left Links -->
+        <nav class="nav-links nav-links--left" aria-label="Primary navigation left">
+          <a href="shop.html" class="nav-link" id="shop-hover-trigger">Shop</a>
+          <a href="about.html" class="nav-link">About</a>
+        </nav>
+
+        <!-- Mobile Hamburger -->
+        <button class="nav-hamburger" id="hamburger-btn" aria-label="Open menu" aria-expanded="false">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+
+        <!-- Mobile Cart Icon -->
+        <a href="cart.html" class="nav-cart-mobile" aria-label="Cart">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          <span class="nav-cart-mobile__badge cart-badge">0</span>
+        </a>
+
+        <!-- Logo (centered wordmark + mobile image) -->
+        <a href="index.html" class="nav-logo" aria-label="Aalfaz home">
+          Aalfaz
+          <img src="logo.png" alt="" class="nav-logo__mobile-img" aria-hidden="true" />
+        </a>
+
+        <!-- Right Links -->
+        <nav class="nav-links nav-links--right" aria-label="Primary navigation right">
+          <a href="#" class="nav-link nav-link--desktop">Search</a>
+          <a href="account.html" class="nav-link nav-link--desktop" id="account-btn">Account</a>
+          <a href="cart.html" class="nav-link" id="cart-link" style="display:flex;align-items:center;gap:0.5rem">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            <span class="cart-count-text">Cart</span>
+          </a>
+        </nav>
+      </div>
+
+      <!-- Mega-Menu Dropdown (Rhode-style, hover-only) -->
+      <div class="mega-menu" id="mega-menu">
+        <div class="mega-menu__content">
+
+          <!-- Category Tabs -->
+          <div class="mega-menu__tabs" id="mega-tabs">
+            <button class="mega-menu__tab mega-menu__tab--active" data-category="featured">Featured</button>
+            <button class="mega-menu__tab" data-category="earrings">Earrings</button>
+            <button class="mega-menu__tab" data-category="pendants">Pendants</button>
+            <button class="mega-menu__tab" data-category="anklets">Anklets</button>
+            <button class="mega-menu__tab" data-category="rings">Rings</button>
+            <button class="mega-menu__tab" data-category="bracelets">Bracelets</button>
+            <button class="mega-menu__tab" data-category="accessories">Accessories</button>
+          </div>
+
+          <!-- Product Carousel -->
+          <div class="mega-menu__carousel" id="mega-carousel">
+            <div class="mega-menu__cards" id="mega-cards"></div>
+            <button class="mega-menu__arrow mega-menu__arrow--right" id="mega-arrow-right" aria-label="Next">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg>
+            </button>
+            <button class="mega-menu__arrow mega-menu__arrow--left" id="mega-arrow-left" aria-label="Previous">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+          </div>
+
+          <!-- Coming Soon -->
+          <div class="mega-menu__coming-soon" id="mega-coming-soon" style="display:none;">
+            <p class="mega-menu__coming-text">Coming Soon</p>
+          </div>
+
+          <!-- Bottom CTA Pill -->
+          <div class="mega-menu__cta-wrap">
+            <a href="shop.html" class="mega-menu__cta" id="mega-cta">SHOP FEATURED</a>
+          </div>
+
+        </div>
+      </div>
+
+    </header>
+
+    <!-- Mobile Menu Drawer -->
+    <div class="mobile-menu" id="mobile-menu" aria-hidden="true">
+      <nav class="mobile-menu__nav">
+        <a href="shop.html" class="mobile-menu__link">Shop</a>
+        <a href="about.html" class="mobile-menu__link">About</a>
+        <a href="#" class="mobile-menu__link">Search</a>
+        <a href="account.html" class="mobile-menu__link">Account</a>
+        <a href="cart.html" class="mobile-menu__link cart-count-text">Cart</a>
+      </nav>
+    </div>
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+    <main>
+      <div class="account-page-container">
+        <!-- Logged-out view -->
+        <div id="auth-view">
+          <div class="auth-tabs">
+            <button class="auth-tab is-active" data-auth-tab="signin">Sign In</button>
+            <button class="auth-tab" data-auth-tab="signup">Create Account</button>
+          </div>
+
+          <!-- Sign In Form -->
+          <form class="auth-form" id="signin-form" novalidate>
+            <div class="auth-error" id="signin-error"></div>
+            <div class="auth-field">
+              <label for="si-email">Email</label>
+              <input type="email" id="si-email" placeholder="you@example.com" required />
+            </div>
+            <div class="auth-field">
+              <label for="si-password">Password</label>
+              <input type="password" id="si-password" placeholder="••••••••" required />
+            </div>
+            <button type="submit" class="auth-btn" id="signin-btn">Sign In</button>
+            <button type="button" class="auth-forgot" id="forgot-btn">Forgot password?</button>
+            <div class="auth-success" id="forgot-success">Reset link sent! Check your inbox.</div>
+            <div class="auth-divider">or</div>
+            <button type="button" class="google-btn" id="google-signin-btn">
+              <svg viewBox="0 0 48 48"><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v8.51h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.14z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="#FBBC05" d="M10.53 28.59c-.47-1.39-.74-2.88-.74-4.59s.27-3.2.74-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"/><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.55 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/></svg>
+              Continue with Google
+            </button>
+          </form>
+
+          <!-- Sign Up Form -->
+          <form class="auth-form auth-form--hidden" id="signup-form" novalidate>
+            <div class="auth-error" id="signup-error"></div>
+            <div class="auth-field-row">
+              <div class="auth-field">
+                <label for="su-fname">First Name</label>
+                <input type="text" id="su-fname" placeholder="Priya" required />
+              </div>
+              <div class="auth-field">
+                <label for="su-lname">Last Name</label>
+                <input type="text" id="su-lname" placeholder="Sharma" />
+              </div>
+            </div>
+            <div class="auth-field">
+              <label for="su-email">Email</label>
+              <input type="email" id="su-email" placeholder="you@example.com" required />
+            </div>
+            <div class="auth-field">
+              <label for="su-phone">Phone (optional)</label>
+              <input type="tel" id="su-phone" placeholder="+91 98765 43210" />
+            </div>
+            <div class="auth-field">
+              <label for="su-country">Country</label>
+              <select id="su-country">
+                <option value="IN">India</option>
+                <option value="US">United States</option>
+                <option value="GB">United Kingdom</option>
+                <option value="AE">UAE</option>
+                <option value="SA">Saudi Arabia</option>
+                <option value="AU">Australia</option>
+                <option value="CA">Canada</option>
+                <option value="EU">Europe</option>
+                <option value="SG">Singapore</option>
+              </select>
+            </div>
+            <div class="auth-field">
+              <label for="su-password">Password</label>
+              <input type="password" id="su-password" placeholder="Min. 6 characters" required />
+            </div>
+            <div class="auth-field">
+              <label for="su-confirm">Confirm Password</label>
+              <input type="password" id="su-confirm" placeholder="Repeat password" required />
+            </div>
+            <button type="submit" class="auth-btn" id="signup-btn">Create Account</button>
+            <div class="auth-divider">or</div>
+            <button type="button" class="google-btn" id="google-signup-btn">
+              <svg viewBox="0 0 48 48"><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v8.51h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.14z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/><path fill="#FBBC05" d="M10.53 28.59c-.47-1.39-.74-2.88-.74-4.59s.27-3.2.74-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24s.92 7.54 2.55 10.78l7.98-6.19z"/><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.55 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/></svg>
+              Continue with Google
+            </button>
+          </form>
+        </div>
+
+        <!-- Logged-in view -->
+        <div id="account-view" style="display:none; flex-direction:column; flex:1;">
+          <div class="acct-profile-bar" id="acct-profile-bar">
+            <div class="acct-avatar" id="acct-avatar">A</div>
+            <div>
+              <div class="acct-name" id="acct-name">Welcome</div>
+              <div class="acct-email" id="acct-email"></div>
+            </div>
+          </div>
+          
+          <div class="acct-panel is-active" id="acct-panel-profile" style="margin-top: 1.5rem;">
+            <h3>Profile Details</h3>
+            <form id="profile-form" class="auth-form" style="margin-top: 1rem;">
+              <div class="auth-error" id="profile-error"></div>
+              <div class="auth-success" id="profile-success"></div>
+              <div class="auth-field">
+                <label for="pf-name">Full Name</label>
+                <input type="text" id="pf-name" />
+              </div>
+              <div class="auth-field">
+                <label for="pf-phone">Phone</label>
+                <input type="tel" id="pf-phone" />
+              </div>
+              <button type="submit" class="auth-btn">Save Changes</button>
+            </form>
+          </div>
+
+          <button class="acct-signout-btn" id="signout-btn" style="margin-top:1.5rem;">Sign Out</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer" id="site-footer">
+      <div class="footer__inner">
+
+        <!-- Oversized Animated Logo -->
+        <div class="footer__logo-wrap">
+          <h2 class="footer__logo-text" id="footer-logo">Aalfaz</h2>
+        </div>
+
+        <!-- Thin divider -->
+        <hr class="footer__divider" />
+
+        <!-- Link grid -->
+        <div class="footer__links-grid">
+          <div class="footer__link-col">
+            <h3 class="footer__col-title">Collections</h3>
+            <a href="shop.html?cat=rings" class="footer__link">Rings</a>
+            <a href="shop.html?cat=pendants" class="footer__link">Necklaces</a>
+            <a href="shop.html?cat=earrings" class="footer__link">Earrings</a>
+            <a href="shop.html?cat=bracelets" class="footer__link">Bracelets</a>
+            <a href="shop.html?cat=anklets" class="footer__link">Anklets</a>
+          </div>
+          <div class="footer__link-col">
+            <h3 class="footer__col-title">Brand</h3>
+            <a href="about.html" class="footer__link">About Alfaaz</a>
+            <a href="craftsmanship.html" class="footer__link">Craftsmanship</a>
+          </div>
+          <div class="footer__link-col">
+            <h3 class="footer__col-title">Support</h3>
+            <span class="footer__col-title" style="display:block;margin-bottom:.75rem;">Contact</span>
+            <div class="footer__contact-icons">
+              <a href="tel:#" class="footer__contact-icon" data-cms-social="call" aria-label="Call us">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
+                Call
+              </a>
+              <a href="https://wa.me/#" class="footer__contact-icon" data-cms-social="whatsapp" target="_blank" rel="noopener" aria-label="WhatsApp">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                WhatsApp
+              </a>
+              <a href="https://instagram.com/" class="footer__contact-icon" data-cms-social="instagram" target="_blank" rel="noopener" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                Instagram
+              </a>
+              <a href="mailto:#" class="footer__contact-icon" data-cms-social="email" aria-label="Email us">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                Email
+              </a>
+              <a href="https://facebook.com/" class="footer__contact-icon" data-cms-social="facebook" target="_blank" rel="noopener" aria-label="Facebook">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                Facebook
+              </a>
+            </div>
+          </div>
+          <div class="footer__link-col">
+            <h3 class="footer__col-title">Legal</h3>
+            <a href="privacy-policy.html" class="footer__link">Privacy Policy</a>
+            <a href="terms.html" class="footer__link">Terms</a>
+            <a href="manage-ecommerce.html" class="footer__link footer__link--admin" id="manage-ecom-link" style="display:none;">Manage Ecommerce</a>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="footer__bottom">
+          <p class="footer__copyright">&copy; 2026 Alfaaz. All rights reserved.</p>
+          <div class="footer__region-selector">
+            <span class="footer__region-dot"></span>
+            <span class="footer__region-label">Region /</span>
+            <div class="footer__select-wrap">
+              <select id="country-selector" class="footer__select">
+                <option value="IN">India (INR)</option>
+                <option value="US">United States (USD)</option>
+                <option value="UK">United Kingdom (GBP)</option>
+                <option value="EU">Europe (EUR)</option>
+                <option value="CA">Canada (CAD)</option>
+              </select>
+              <svg class="footer__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </footer>
+
+    <script type="module" src="js/firebase-config.js"></script>
+    <script src="js/navbar.js"></script>
+    <script src="js/mobile-menu.js"></script>
+    <script src="js/footer-parallax.js"></script>
+    <script src="js/footer-contact.js"></script>
+    <script src="js/region.js"></script>
+    
+    <script type="module">
+      import { signUpWithEmail, signInWithEmail, signInWithGoogle, signOutUser, resetPassword, getUserProfile, onAuthChange, getAuthErrorMessage } from './js/auth.js';
+      import { db, doc, setDoc, updateDoc } from './js/firebase-config.js';
+
+      const authView = document.getElementById('auth-view');
+      const acctView = document.getElementById('account-view');
+      const tabs = document.querySelectorAll('.auth-tab');
+      const signinForm = document.getElementById('signin-form');
+      const signupForm = document.getElementById('signup-form');
+
+      tabs.forEach(t => {
+        t.addEventListener('click', () => {
+          tabs.forEach(tab => tab.classList.remove('is-active'));
+          t.classList.add('is-active');
+          if (t.dataset.authTab === 'signin') {
+            signinForm.classList.remove('auth-form--hidden');
+            signupForm.classList.add('auth-form--hidden');
+          } else {
+            signupForm.classList.remove('auth-form--hidden');
+            signinForm.classList.add('auth-form--hidden');
+          }
+        });
+      });
+
+      function showError(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg; el.classList.add('is-visible');
+      }
+      function clearError(id) {
+        const el = document.getElementById(id);
+        el.textContent = ''; el.classList.remove('is-visible');
+      }
+      function showSuccess(id, msg) {
+        const el = document.getElementById(id);
+        el.textContent = msg; el.classList.add('is-visible');
+      }
+
+      signinForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError('signin-error');
+        const em = document.getElementById('si-email').value.trim();
+        const pw = document.getElementById('si-password').value;
+        const btn = document.getElementById('signin-btn');
+        if (!em || !pw) { showError('signin-error', 'Please fill all fields.'); return; }
+        btn.textContent = 'Signing in...'; btn.disabled = true;
+        try {
+          await signInWithEmail(em, pw);
+          window.location.href = 'index.html';
+        } catch(err) {
+          showError('signin-error', getAuthErrorMessage(err));
+          btn.textContent = 'Sign In'; btn.disabled = false;
+        }
+      });
+
+      signupForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError('signup-error');
+        const f = document.getElementById('su-fname').value.trim();
+        const l = document.getElementById('su-lname').value.trim();
+        const eAddr = document.getElementById('su-email').value.trim();
+        const ph = document.getElementById('su-phone').value.trim();
+        const c = document.getElementById('su-country').value;
+        const p1 = document.getElementById('su-password').value;
+        const p2 = document.getElementById('su-confirm').value;
+        const btn = document.getElementById('signup-btn');
+        if (!f || !eAddr || !p1) { showError('signup-error','Please fill required fields.'); return; }
+        if (p1 !== p2) { showError('signup-error','Passwords do not match.'); return; }
+        if (p1.length < 6) { showError('signup-error','Password must be at least 6 characters.'); return; }
+        btn.textContent = 'Creating...'; btn.disabled = true;
+        try {
+          const user = await signUpWithEmail(eAddr, p1);
+          const fullName = f + (l ? ' ' + l : '');
+          const profileData = { name: fullName, phone: ph, country: c, email: eAddr, createdAt: new Date().toISOString() };
+          await setDoc(doc(db, 'users', user.uid), profileData, { merge:true });
+          window.location.href = 'index.html';
+        } catch(err) {
+          showError('signup-error', getAuthErrorMessage(err));
+          btn.textContent = 'Create Account'; btn.disabled = false;
+        }
+      });
+
+      document.getElementById('google-signin-btn').addEventListener('click', async () => {
+        try {
+          await signInWithGoogle();
+          window.location.href = 'index.html';
+        } catch(err) { showError('signin-error', getAuthErrorMessage(err)); }
+      });
+      document.getElementById('google-signup-btn').addEventListener('click', async () => {
+        try {
+          await signInWithGoogle();
+          window.location.href = 'index.html';
+        } catch(err) { showError('signup-error', getAuthErrorMessage(err)); }
+      });
+
+      document.getElementById('forgot-btn').addEventListener('click', async () => {
+        const em = document.getElementById('si-email').value.trim();
+        if (!em) { showError('signin-error','Enter your email first to reset password.'); return; }
+        try {
+          await resetPassword(em);
+          showSuccess('forgot-success','Reset link sent! Check your inbox.');
+        } catch(err) { showError('signin-error', getAuthErrorMessage(err)); }
+      });
+
+      document.getElementById('signout-btn').addEventListener('click', async () => {
+        await signOutUser();
+        window.location.reload();
+      });
+
+      let currentUser = null;
+      document.getElementById('profile-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        clearError('profile-error'); clearError('profile-success');
+        if (!currentUser) return;
+        const n = document.getElementById('pf-name').value.trim();
+        const p = document.getElementById('pf-phone').value.trim();
+        try {
+          await updateDoc(doc(db, 'users', currentUser.uid), { name: n, phone: p });
+          showSuccess('profile-success', 'Profile updated successfully.');
+          document.getElementById('acct-name').textContent = n;
+        } catch(err) { showError('profile-error', 'Error updating profile.'); }
+      });
+
+      onAuthChange(async (user) => {
+        if (user) {
+          currentUser = user;
+          authView.style.display = 'none';
+          acctView.style.display = 'flex';
+          const profile = await getUserProfile(user.uid);
+          const name = profile && profile.name ? profile.name : (user.displayName || user.email.split('@')[0]);
+          document.getElementById('acct-name').textContent = name;
+          document.getElementById('acct-email').textContent = user.email;
+          const avatarEl = document.getElementById('acct-avatar');
+          if (user.photoURL) {
+            avatarEl.innerHTML = `<img src="${user.photoURL}" alt="${name}" />`;
+          } else {
+            avatarEl.textContent = name.charAt(0).toUpperCase();
+          }
+          if (profile) {
+            document.getElementById('pf-name').value = profile.name || '';
+            document.getElementById('pf-phone').value = profile.phone || '';
+          }
+        } else {
+          currentUser = null;
+          authView.style.display = 'block';
+          acctView.style.display = 'none';
+        }
+      });
+    </script>
+  </body>
+</html>

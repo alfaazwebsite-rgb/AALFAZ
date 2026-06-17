@@ -55,7 +55,7 @@
         </a>
         <nav class="nav-links nav-links--right" aria-label="Primary navigation right">
           <a href="#" class="nav-link nav-link--desktop">Search</a>
-          <button class="nav-link nav-link--desktop nav-account-trigger" id="account-btn" aria-label="Open account">Account</button>
+          <a href="account.html" class="nav-link nav-link--desktop" id="account-btn">Account</a>
           <a href="cart.html" class="nav-link" id="cart-link" style="display:flex;align-items:center;gap:0.5rem">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
             <span class="cart-count-text">Cart</span>
@@ -69,7 +69,7 @@
         <a href="shop.html" class="mobile-menu__link">Shop</a>
         <a href="about.html" class="mobile-menu__link">About</a>
         <a href="#" class="mobile-menu__link">Search</a>
-        <button class="mobile-menu__link" data-account="true" style="background:none;border:none;cursor:pointer;text-align:left;padding:0;font:inherit;color:inherit;">Account</button>
+        <a href="account.html" class="mobile-menu__link">Account</a>
         <a href="cart.html" class="mobile-menu__link cart-count-text">Cart</a>
       </nav>
     </div>
@@ -157,8 +157,7 @@
           </div>
           <div class="footer__link-col">
             <h3 class="footer__col-title">Support</h3>
-            <button id="footer-contact-toggle" class="footer__link" aria-expanded="false">Contact</button>
-            <div class="footer__contact-tray" id="footer-contact-tray">
+            <span class="footer__col-title" style="display:block;margin-bottom:.75rem;">Contact</span>
               <div class="footer__contact-icons">
                 <a href="tel:#" class="footer__contact-icon" data-cms-social="call" aria-label="Call us">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.8a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.09-1.09a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg>
@@ -181,8 +180,7 @@
                   Facebook
                 </a>
               </div>
-            </div>
-            <a href="shipping-returns.html" class="footer__link">Shipping &amp; Returns</a>
+              <a href="shipping-returns.html" class="footer__link">Shipping &amp; Returns</a>
             <a href="care-guide.html" class="footer__link">Care Guide</a>
           </div>
           <div class="footer__link-col">

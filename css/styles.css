@@ -2406,7 +2406,7 @@ body.menu-open {
 .footer__contact-icons {
   display: flex;
   align-items: center;
-  gap: 1.2rem;
+  gap: 1rem;
   padding: 0.85rem 0 0.25rem;
   flex-wrap: wrap;
 }
@@ -2428,8 +2428,8 @@ body.menu-open {
   transform: translateY(-2px);
 }
 .footer__contact-icon svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 #footer-contact-toggle {
   cursor: pointer;
